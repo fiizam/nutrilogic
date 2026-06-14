@@ -1,0 +1,65 @@
+[
+  {
+    "id": "E01",
+    "nama_latihan": "Jalan Cepat (Brisk Walking, 5-6 km/jam)",
+    "kategori": "Cardio",
+    "met": 4.3,
+    "intensitas": "Sedang",
+    "deskripsi": "Latihan low-impact yang sangat baik untuk memulai adaptasi kardiovaskular tanpa membebani sendi lutut.",
+    "sumber_validasi": "Compendium of Physical Activities (Code: 17190)"
+  },
+  {
+    "id": "E02",
+    "nama_latihan": "Lari (Jogging/Running, 8 km/jam)",
+    "kategori": "Cardio",
+    "met": 8.3,
+    "intensitas": "Tinggi",
+    "deskripsi": "Pembakaran kalori masif dalam waktu singkat. Optimal untuk menciptakan defisit kalori harian.",
+    "sumber_validasi": "Compendium of Physical Activities (Code: 12020)"
+  },
+  {
+    "id": "E03",
+    "nama_latihan": "Bersepeda Statis (Upright, Sedang)",
+    "kategori": "Cardio",
+    "met": 6.8,
+    "intensitas": "Sedang",
+    "deskripsi": "Kardio non-weight-bearing yang aman bagi pengguna dengan BMI berlebih (Overweight/Obese).",
+    "sumber_validasi": "Compendium of Physical Activities (Code: 02010)"
+  },
+  {
+    "id": "E04",
+    "nama_latihan": "Angkat Beban Dasar (Resistance/Weight Training)",
+    "kategori": "Strength Training",
+    "met": 5.0,
+    "intensitas": "Sedang",
+    "deskripsi": "Fokus pada gerakan compound untuk merangsang hipertrofi (pertumbuhan otot) dengan alat beban luar.",
+    "sumber_validasi": "ACSM Guidelines / Compendium (Code: 02050)"
+  },
+  {
+    "id": "E05",
+    "nama_latihan": "Kalistenik (Bodyweight Workout)",
+    "kategori": "Strength Training",
+    "met": 4.8,
+    "intensitas": "Sedang",
+    "deskripsi": "Latihan kekuatan menggunakan beban tubuh sendiri (Push-up, Pull-up, Squat), membangun massa otot fungsional.",
+    "sumber_validasi": "Compendium of Physical Activities (Code: 02030)"
+  },
+  {
+    "id": "E06",
+    "nama_latihan": "HIIT (High-Intensity Interval Training)",
+    "kategori": "Cardio & Strength",
+    "met": 8.0,
+    "intensitas": "Tinggi",
+    "deskripsi": "Meningkatkan efek EPOC (Excess Post-exercise Oxygen Consumption) di mana tubuh tetap membakar kalori setelah latihan selesai.",
+    "sumber_validasi": "Harvard Health / Compendium"
+  },
+  {
+    "id": "E07",
+    "nama_latihan": "Yoga / Peregangan Dinamis",
+    "kategori": "Flexibility & Recovery",
+    "met": 2.5,
+    "intensitas": "Rendah",
+    "deskripsi": "Pemulihan otot aktif, perbaikan postur tubuh, dan fleksibilitas untuk mendukung fase maintenance.",
+    "sumber_validasi": "Compendium of Physical Activities (Code: 02130)"
+  }
+]

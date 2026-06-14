@@ -1,0 +1,729 @@
+[
+  {
+    "id_bahan": "B01",
+    "nama_bahan": "Beras / Nasi",
+    "kategori": "Serealia",
+    "olahan": [
+      {
+        "id": "O101",
+        "nama_masakan": "Nasi Putih Hangat",
+        "kalori": 130,
+        "protein": 2.7,
+        "lemak": 0.3,
+        "karbohidrat": 28,
+        "natrium": 1,
+        "ukuran_sajian": "1 Centong (100g)",
+        "health_score": 85,
+        "alasan": "Sumber karbohidrat murni tanpa tambahan lemak.",
+        "sumber_validasi": "TKPI / USDA"
+      },
+      {
+        "id": "O102",
+        "nama_masakan": "Nasi Merah Kukus",
+        "kalori": 110,
+        "protein": 2.5,
+        "lemak": 0.9,
+        "karbohidrat": 23,
+        "natrium": 2,
+        "ukuran_sajian": "1 Centong (100g)",
+        "health_score": 95,
+        "alasan": "Tinggi serat dan indeks glikemik rendah, sangat lambat dicerna.",
+        "sumber_validasi": "Kemenkes / USDA"
+      },
+      {
+        "id": "O103",
+        "nama_masakan": "Nasi Goreng Spesial",
+        "kalori": 320,
+        "protein": 9,
+        "lemak": 14,
+        "karbohidrat": 38,
+        "natrium": 650,
+        "ukuran_sajian": "1 Piring Sedang (150g)",
+        "health_score": 50,
+        "alasan": "Tinggi kalori & natrium karena penyerapan minyak dan kecap.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O104",
+        "nama_masakan": "Bubur Ayam (Tanpa Kerupuk)",
+        "kalori": 180,
+        "protein": 12,
+        "lemak": 5,
+        "karbohidrat": 22,
+        "natrium": 320,
+        "ukuran_sajian": "1 Mangkuk Sedang",
+        "health_score": 75,
+        "alasan": "Volume air tinggi mengenyangkan dengan kalori relatif rendah.",
+        "sumber_validasi": "MyFitnessPal"
+      },
+      {
+        "id": "O105",
+        "nama_masakan": "Nasi Kuning",
+        "kalori": 200,
+        "protein": 4,
+        "lemak": 6,
+        "karbohidrat": 33,
+        "natrium": 200,
+        "ukuran_sajian": "1 Centong (100g)",
+        "health_score": 70,
+        "alasan": "Penambahan kalori dari santan kelapa dan pewarna kunyit (antioksidan).",
+        "sumber_validasi": "TKPI Olahan"
+      },
+      {
+        "id": "O106",
+        "nama_masakan": "Lontong Sayur Padang",
+        "kalori": 300,
+        "protein": 8,
+        "lemak": 15,
+        "karbohidrat": 35,
+        "natrium": 450,
+        "ukuran_sajian": "1 Porsi Sedang",
+        "health_score": 60,
+        "alasan": "Lontong memadatkan karbohidrat, kuah gulai menyumbang lemak jenuh tinggi.",
+        "sumber_validasi": "FatSecret / TKPI"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B02",
+    "nama_bahan": "Daging Ayam",
+    "kategori": "Lauk Hewani",
+    "olahan": [
+      {
+        "id": "O201",
+        "nama_masakan": "Ayam Bakar Dada Madu",
+        "kalori": 185,
+        "protein": 28,
+        "lemak": 4,
+        "karbohidrat": 8,
+        "natrium": 210,
+        "ukuran_sajian": "1 Potong Sedang (100g)",
+        "health_score": 85,
+        "alasan": "Tinggi protein, dibakar membuang lemak, sedikit ekstra karbo dari madu.",
+        "sumber_validasi": "USDA / TKPI"
+      },
+      {
+        "id": "O202",
+        "nama_masakan": "Ayam Geprek Sambal Bawang",
+        "kalori": 340,
+        "protein": 20,
+        "lemak": 22,
+        "karbohidrat": 15,
+        "natrium": 450,
+        "ukuran_sajian": "1 Potong + Sambal (120g)",
+        "health_score": 40,
+        "alasan": "Kalori melonjak akibat deep-fry tepung dan minyak sambal bawang.",
+        "sumber_validasi": "Jurnal Gizi Kemenkes"
+      },
+      {
+        "id": "O203",
+        "nama_masakan": "Opor Ayam Kuah Kuning",
+        "kalori": 260,
+        "protein": 18,
+        "lemak": 19,
+        "karbohidrat": 4,
+        "natrium": 350,
+        "ukuran_sajian": "1 Potong + Kuah (150g)",
+        "health_score": 60,
+        "alasan": "Lemak jenuh tinggi dari reduksi santan kental.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O204",
+        "nama_masakan": "Soto Ayam Bening",
+        "kalori": 120,
+        "protein": 15,
+        "lemak": 5,
+        "karbohidrat": 2,
+        "natrium": 550,
+        "ukuran_sajian": "1 Mangkuk (Tanpa Nasi)",
+        "health_score": 80,
+        "alasan": "Protein ayam rebus dengan kuah rempah rendah kalori, awas natrium.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O205",
+        "nama_masakan": "Ayam Rica-Rica",
+        "kalori": 210,
+        "protein": 22,
+        "lemak": 11,
+        "karbohidrat": 5,
+        "natrium": 280,
+        "ukuran_sajian": "1 Porsi (100g)",
+        "health_score": 75,
+        "alasan": "Capsaicin dari cabai membantu metabolisme, bumbu menyumbang sedikit lemak tumis.",
+        "sumber_validasi": "MyFitnessPal"
+      },
+      {
+        "id": "O206",
+        "nama_masakan": "Sate Ayam Madura (Bumbu Kacang)",
+        "kalori": 350,
+        "protein": 25,
+        "lemak": 18,
+        "karbohidrat": 20,
+        "natrium": 400,
+        "ukuran_sajian": "10 Tusuk + Bumbu",
+        "health_score": 65,
+        "alasan": "Daging bakar tinggi protein, namun bumbu kacang dan kecap sangat padat kalori.",
+        "sumber_validasi": "FatSecret / Kemenkes"
+      },
+      {
+        "id": "O207",
+        "nama_masakan": "Ayam Suwir Pedas (Bali)",
+        "kalori": 190,
+        "protein": 22,
+        "lemak": 8,
+        "karbohidrat": 6,
+        "natrium": 350,
+        "ukuran_sajian": "1 Porsi (80g)",
+        "health_score": 80,
+        "alasan": "Direbus lalu disuwir dan ditumis sedikit minyak, protein padat.",
+        "sumber_validasi": "TKPI Olahan"
+      },
+      {
+        "id": "O208",
+        "nama_masakan": "Ayam Goreng Mentega",
+        "kalori": 310,
+        "protein": 18,
+        "lemak": 22,
+        "karbohidrat": 8,
+        "natrium": 450,
+        "ukuran_sajian": "1 Potong Sedang (100g)",
+        "health_score": 45,
+        "alasan": "Kombinasi mentega dan deep-frying menjadikan lemak sangat tinggi.",
+        "sumber_validasi": "MyFitnessPal"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B03",
+    "nama_bahan": "Ikan & Seafood",
+    "kategori": "Ikan & Seafood",
+    "olahan": [
+      {
+        "id": "O301",
+        "nama_masakan": "Pecel Lele Goreng Kering",
+        "kalori": 240,
+        "protein": 16,
+        "lemak": 18,
+        "karbohidrat": 3,
+        "natrium": 180,
+        "ukuran_sajian": "1 Ekor Sedang (100g)",
+        "health_score": 55,
+        "alasan": "Penyerapan minyak kelapa sawit sangat tinggi pada kulit lele.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O302",
+        "nama_masakan": "Pepes Ikan Nila",
+        "kalori": 115,
+        "protein": 19,
+        "lemak": 3,
+        "karbohidrat": 2,
+        "natrium": 150,
+        "ukuran_sajian": "1 Bungkus/Ekor (100g)",
+        "health_score": 95,
+        "alasan": "Metode kukus (steam) mempertahankan nutrisi tanpa penambahan lemak kalori.",
+        "sumber_validasi": "Kemenkes"
+      },
+      {
+        "id": "O303",
+        "nama_masakan": "Ikan Kuah Kuning (Asam Pedas)",
+        "kalori": 130,
+        "protein": 20,
+        "lemak": 4,
+        "karbohidrat": 3,
+        "natrium": 300,
+        "ukuran_sajian": "1 Mangkuk Sedang",
+        "health_score": 90,
+        "alasan": "Rendah lemak, tinggi protein, dengan rempah anti-inflamasi.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O304",
+        "nama_masakan": "Ikan Tongkol Balado",
+        "kalori": 180,
+        "protein": 20,
+        "lemak": 9,
+        "karbohidrat": 4,
+        "natrium": 250,
+        "ukuran_sajian": "1 Potong Sedang (80g)",
+        "health_score": 75,
+        "alasan": "Daging tongkol padat protein, lemak dominan dari minyak balado.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O305",
+        "nama_masakan": "Udang Saus Padang",
+        "kalori": 150,
+        "protein": 18,
+        "lemak": 5,
+        "karbohidrat": 8,
+        "natrium": 500,
+        "ukuran_sajian": "1 Porsi (100g)",
+        "health_score": 70,
+        "alasan": "Udang rendah kalori alami, namun saus padang menyumbang natrium tinggi.",
+        "sumber_validasi": "USDA / MyFitnessPal"
+      },
+      {
+        "id": "O306",
+        "nama_masakan": "Cumi Masak Hitam",
+        "kalori": 170,
+        "protein": 16,
+        "lemak": 8,
+        "karbohidrat": 6,
+        "natrium": 300,
+        "ukuran_sajian": "1 Porsi (100g)",
+        "health_score": 75,
+        "alasan": "Tinta cumi kaya asam amino, ditumis menghasilkan profil kalori moderat.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O307",
+        "nama_masakan": "Ikan Teri Kacang Goreng",
+        "kalori": 250,
+        "protein": 15,
+        "lemak": 16,
+        "karbohidrat": 10,
+        "natrium": 400,
+        "ukuran_sajian": "3 Sendok Makan (50g)",
+        "health_score": 60,
+        "alasan": "Kacang dan teri goreng menyerap minyak, tinggi kalsium namun tinggi kalori.",
+        "sumber_validasi": "TKPI"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B04",
+    "nama_bahan": "Kacang Kedelai (Tempe/Tahu)",
+    "kategori": "Nabati",
+    "olahan": [
+      {
+        "id": "O401",
+        "nama_masakan": "Tempe Orek Manis",
+        "kalori": 250,
+        "protein": 14,
+        "lemak": 12,
+        "karbohidrat": 22,
+        "natrium": 400,
+        "ukuran_sajian": "1 Sendok Sayur (75g)",
+        "health_score": 65,
+        "alasan": "Protein nabati bagus, namun karbohidrat gula aren/kecap sangat tinggi.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O402",
+        "nama_masakan": "Tempe Bacem",
+        "kalori": 180,
+        "protein": 12,
+        "lemak": 8,
+        "karbohidrat": 16,
+        "natrium": 220,
+        "ukuran_sajian": "2 Potong Sedang (80g)",
+        "health_score": 75,
+        "alasan": "Direbus lama dengan bumbu gula kelapa, kalori moderat.",
+        "sumber_validasi": "MyFitnessPal"
+      },
+      {
+        "id": "O403",
+        "nama_masakan": "Tahu Rebus / Kukus Bening",
+        "kalori": 76,
+        "protein": 8,
+        "lemak": 4.5,
+        "karbohidrat": 1.9,
+        "natrium": 10,
+        "ukuran_sajian": "2 Kotak Sedang (100g)",
+        "health_score": 95,
+        "alasan": "Sangat rendah kalori, mempertahankan hidrasi tahu.",
+        "sumber_validasi": "USDA"
+      },
+      {
+        "id": "O404",
+        "nama_masakan": "Tahu Isi Goreng (Gehu)",
+        "kalori": 150,
+        "protein": 5,
+        "lemak": 10,
+        "karbohidrat": 11,
+        "natrium": 180,
+        "ukuran_sajian": "1 Buah Besar (60g)",
+        "health_score": 50,
+        "alasan": "Tepung dan tahu menyerap minyak sangat banyak saat digoreng kering.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O405",
+        "nama_masakan": "Oseng Tahu Tempe Kecap",
+        "kalori": 190,
+        "protein": 11,
+        "lemak": 9,
+        "karbohidrat": 15,
+        "natrium": 300,
+        "ukuran_sajian": "1 Sendok Sayur Besar (80g)",
+        "health_score": 75,
+        "alasan": "Tumisan seimbang protein nabati dengan tambahan rasa manis gurih.",
+        "sumber_validasi": "FatSecret"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B05",
+    "nama_bahan": "Daging Sapi",
+    "kategori": "Lauk Hewani",
+    "olahan": [
+      {
+        "id": "O501",
+        "nama_masakan": "Rendang Daging Sapi",
+        "kalori": 320,
+        "protein": 24,
+        "lemak": 22,
+        "karbohidrat": 5,
+        "natrium": 480,
+        "ukuran_sajian": "1 Potong + Bumbu (80g)",
+        "health_score": 50,
+        "alasan": "Proses masak santan lama menjadikannya lemak jenuh tinggi.",
+        "sumber_validasi": "Kemenkes"
+      },
+      {
+        "id": "O502",
+        "nama_masakan": "Rawon Sapi",
+        "kalori": 180,
+        "protein": 18,
+        "lemak": 10,
+        "karbohidrat": 4,
+        "natrium": 550,
+        "ukuran_sajian": "1 Mangkuk (Tanpa Nasi)",
+        "health_score": 75,
+        "alasan": "Daging rebus kluwek, protein moderat namun kuahnya mengandung kaldu natrium.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O503",
+        "nama_masakan": "Semur Daging Sapi",
+        "kalori": 240,
+        "protein": 20,
+        "lemak": 10,
+        "karbohidrat": 15,
+        "natrium": 350,
+        "ukuran_sajian": "1 Potong + Kuah (100g)",
+        "health_score": 65,
+        "alasan": "Protein daging yang empuk, kalori tambahan dari kuah manis kecap/gula.",
+        "sumber_validasi": "MyFitnessPal"
+      },
+      {
+        "id": "O504",
+        "nama_masakan": "Tumis Sapi Lada Hitam",
+        "kalori": 210,
+        "protein": 22,
+        "lemak": 11,
+        "karbohidrat": 6,
+        "natrium": 400,
+        "ukuran_sajian": "1 Porsi (100g)",
+        "health_score": 75,
+        "alasan": "Potongan daging tanpa lemak berlebih ditumis cepat (stir-fry).",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O505",
+        "nama_masakan": "Bakso Sapi Kuah (Tanpa Mie)",
+        "kalori": 280,
+        "protein": 15,
+        "lemak": 12,
+        "karbohidrat": 25,
+        "natrium": 600,
+        "ukuran_sajian": "1 Porsi (5 Butir + Kuah)",
+        "health_score": 55,
+        "alasan": "Tepung tapioka penyumbang karbohidrat, kuah kaldu sapi menyumbang natrium tinggi.",
+        "sumber_validasi": "TKPI Olahan"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B06",
+    "nama_bahan": "Sayuran & Olahan",
+    "kategori": "Sayuran",
+    "olahan": [
+      {
+        "id": "O601",
+        "nama_masakan": "Sayur Bening Bayam",
+        "kalori": 45,
+        "protein": 3,
+        "lemak": 0.5,
+        "karbohidrat": 8,
+        "natrium": 120,
+        "ukuran_sajian": "1 Mangkuk Sedang (100g)",
+        "health_score": 100,
+        "alasan": "Rendah kalori mutlak, sumber zat besi, direbus tanpa lemak.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O602",
+        "nama_masakan": "Tumis Kangkung Saus Tiram",
+        "kalori": 95,
+        "protein": 3,
+        "lemak": 6,
+        "karbohidrat": 6,
+        "natrium": 600,
+        "ukuran_sajian": "1 Porsi (100g)",
+        "health_score": 75,
+        "alasan": "Ekstra lemak dari minyak tumis dan natrium ekstrim dari saus tiram.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O603",
+        "nama_masakan": "Sayur Asem Jakarta",
+        "kalori": 50,
+        "protein": 2,
+        "lemak": 1,
+        "karbohidrat": 9,
+        "natrium": 200,
+        "ukuran_sajian": "1 Mangkuk Sedang",
+        "health_score": 95,
+        "alasan": "Serat tinggi dari ragam sayur, direbus tanpa lemak, hidrasi optimal.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O604",
+        "nama_masakan": "Sayur Lodeh",
+        "kalori": 120,
+        "protein": 3,
+        "lemak": 8,
+        "karbohidrat": 10,
+        "natrium": 300,
+        "ukuran_sajian": "1 Mangkuk Sedang",
+        "health_score": 70,
+        "alasan": "Santan menyumbang lemak kalori pada olahan sayur ini.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O605",
+        "nama_masakan": "Capcay Kuah Ayam/Seafood",
+        "kalori": 110,
+        "protein": 8,
+        "lemak": 3,
+        "karbohidrat": 12,
+        "natrium": 450,
+        "ukuran_sajian": "1 Porsi",
+        "health_score": 85,
+        "alasan": "Sayur kombinasi ditumis sedikit minyak dengan tambahan protein kaldu.",
+        "sumber_validasi": "MyFitnessPal"
+      },
+      {
+        "id": "O606",
+        "nama_masakan": "Gado-Gado (Saus Kacang)",
+        "kalori": 350,
+        "protein": 12,
+        "lemak": 18,
+        "karbohidrat": 38,
+        "natrium": 450,
+        "ukuran_sajian": "1 Piring Lengkap",
+        "health_score": 75,
+        "alasan": "Sayur rebus sangat sehat, namun saus kacang sangat padat kalori dan lemak.",
+        "sumber_validasi": "Kemenkes / TKPI"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B07",
+    "nama_bahan": "Telur",
+    "kategori": "Lauk Hewani",
+    "olahan": [
+      {
+        "id": "O701",
+        "nama_masakan": "Telur Balado",
+        "kalori": 145,
+        "protein": 6.5,
+        "lemak": 11,
+        "karbohidrat": 4,
+        "natrium": 200,
+        "ukuran_sajian": "1 Butir Utuh",
+        "health_score": 70,
+        "alasan": "Digoreng lalu ditumis cabai merah, lemak ganda.",
+        "sumber_validasi": "FatSecret"
+      },
+      {
+        "id": "O702",
+        "nama_masakan": "Telur Rebus Matang",
+        "kalori": 77,
+        "protein": 6.3,
+        "lemak": 5.3,
+        "karbohidrat": 0.6,
+        "natrium": 60,
+        "ukuran_sajian": "1 Butir Utuh",
+        "health_score": 100,
+        "alasan": "Protein biologis sempurna tanpa gangguan kalori luar.",
+        "sumber_validasi": "USDA"
+      },
+      {
+        "id": "O703",
+        "nama_masakan": "Telur Dadar Khas Padang",
+        "kalori": 200,
+        "protein": 10,
+        "lemak": 16,
+        "karbohidrat": 5,
+        "natrium": 250,
+        "ukuran_sajian": "1 Iris Tebal",
+        "health_score": 60,
+        "alasan": "Penggunaan minyak goreng yang banyak diserap oleh adonan telur yang tebal.",
+        "sumber_validasi": "TKPI Olahan"
+      },
+      {
+        "id": "O704",
+        "nama_masakan": "Telur Ceplok Masak Kecap",
+        "kalori": 160,
+        "protein": 7,
+        "lemak": 12,
+        "karbohidrat": 6,
+        "natrium": 300,
+        "ukuran_sajian": "1 Butir",
+        "health_score": 65,
+        "alasan": "Kalori dari minyak goreng ditambah gula dari bumbu kecap manis.",
+        "sumber_validasi": "FatSecret"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B08",
+    "nama_bahan": "Mie & Pasta",
+    "kategori": "Serealia",
+    "olahan": [
+      {
+        "id": "O801",
+        "nama_masakan": "Mie Goreng Jawa / Tek-Tek",
+        "kalori": 380,
+        "protein": 10,
+        "lemak": 15,
+        "karbohidrat": 52,
+        "natrium": 600,
+        "ukuran_sajian": "1 Piring Sedang",
+        "health_score": 45,
+        "alasan": "Tinggi karbohidrat olahan, minyak, dan natrium. Rendah serat.",
+        "sumber_validasi": "FatSecret / Kemenkes"
+      },
+      {
+        "id": "O802",
+        "nama_masakan": "Bihun Kuah Kaldu Ayam",
+        "kalori": 220,
+        "protein": 10,
+        "lemak": 4,
+        "karbohidrat": 35,
+        "natrium": 500,
+        "ukuran_sajian": "1 Mangkuk",
+        "health_score": 75,
+        "alasan": "Bihun jagung/beras direbus, kalori lebih terkontrol dibanding digoreng.",
+        "sumber_validasi": "MyFitnessPal"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B09",
+    "nama_bahan": "Daging Kambing",
+    "kategori": "Lauk Hewani",
+    "olahan": [
+      {
+        "id": "O901",
+        "nama_masakan": "Sate Kambing (Tanpa Lemak Bumbu Kecap)",
+        "kalori": 200,
+        "protein": 24,
+        "lemak": 10,
+        "karbohidrat": 2,
+        "natrium": 150,
+        "ukuran_sajian": "5 Tusuk",
+        "health_score": 80,
+        "alasan": "Daging merah tinggi zat besi dan protein, metode bakar meminimalisir lemak.",
+        "sumber_validasi": "USDA / TKPI"
+      },
+      {
+        "id": "O902",
+        "nama_masakan": "Gulai Kambing",
+        "kalori": 320,
+        "protein": 22,
+        "lemak": 24,
+        "karbohidrat": 5,
+        "natrium": 450,
+        "ukuran_sajian": "1 Mangkuk Sedang",
+        "health_score": 40,
+        "alasan": "Menggunakan jeroan/lemak kambing ditambah kuah santan kental berkalori ekstra.",
+        "sumber_validasi": "TKPI Olahan"
+      },
+      {
+        "id": "O903",
+        "nama_masakan": "Tongseng Kambing",
+        "kalori": 280,
+        "protein": 20,
+        "lemak": 18,
+        "karbohidrat": 8,
+        "natrium": 400,
+        "ukuran_sajian": "1 Porsi",
+        "health_score": 55,
+        "alasan": "Modifikasi gulai dengan tumisan kubis dan bumbu penyedap.",
+        "sumber_validasi": "FatSecret"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B10",
+    "nama_bahan": "Umbi-umbian",
+    "kategori": "Serealia",
+    "olahan": [
+      {
+        "id": "O1001",
+        "nama_masakan": "Perkedel Kentang Goreng",
+        "kalori": 120,
+        "protein": 3,
+        "lemak": 6,
+        "karbohidrat": 14,
+        "natrium": 150,
+        "ukuran_sajian": "1 Buah Sedang",
+        "health_score": 60,
+        "alasan": "Karbohidrat kentang dihaluskan, menyerap minyak saat dicelup telur dan digoreng.",
+        "sumber_validasi": "TKPI"
+      },
+      {
+        "id": "O1002",
+        "nama_masakan": "Singkong Rebus",
+        "kalori": 160,
+        "protein": 1.5,
+        "lemak": 0.3,
+        "karbohidrat": 38,
+        "natrium": 10,
+        "ukuran_sajian": "1 Potong Besar (100g)",
+        "health_score": 90,
+        "alasan": "Alternatif nasi yang mengenyangkan, tinggi serat kompleks, tanpa minyak.",
+        "sumber_validasi": "USDA / TKPI"
+      }
+    ]
+  },
+  {
+    "id_bahan": "B11",
+    "nama_bahan": "Buah-buahan",
+    "kategori": "Buah",
+    "olahan": [
+      {
+        "id": "O1101",
+        "nama_masakan": "Pisang Rebus Kepok",
+        "kalori": 110,
+        "protein": 1,
+        "lemak": 0,
+        "karbohidrat": 28,
+        "natrium": 2,
+        "ukuran_sajian": "1 Buah Sedang",
+        "health_score": 95,
+        "alasan": "Camilan padat kalium dan karbohidrat sehat untuk energi instan.",
+        "sumber_validasi": "USDA"
+      },
+      {
+        "id": "O1102",
+        "nama_masakan": "Salad Buah (Dressing Yogurt)",
+        "kalori": 150,
+        "protein": 4,
+        "lemak": 2,
+        "karbohidrat": 30,
+        "natrium": 30,
+        "ukuran_sajian": "1 Cup Kecil (150g)",
+        "health_score": 90,
+        "alasan": "Kaya mikronutrisi dan probiotik, gunakan yogurt rendah lemak bukan mayones.",
+        "sumber_validasi": "MyFitnessPal"
+      }
+    ]
+  }
+]
