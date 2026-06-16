@@ -45,6 +45,13 @@ export default function PlannerPage() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'meals' | 'workout'>('dashboard');
   const [activeMealTab, setActiveMealTab] = useState<'sarapan' | 'siang' | 'malam'>('sarapan');
   
+  const [toast, setToast] = useState<{show: boolean, message: string, type: 'success'|'error'|'info'}>({ show: false, message: '', type: 'info' });
+
+  const showToast = (message: string, type: 'success'|'error'|'info' = 'info') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast(prev => ({ ...prev, show: false })), 4000);
+  };
+
   const { data: session } = useSession();
 
   const derivedTargetDiet = (!formData.target_berat || formData.target_berat === formData.berat) 
@@ -54,7 +61,7 @@ export default function PlannerPage() {
   const isFormValid = formData.berat > 0 && formData.tinggi > 0 && formData.umur > 0;
 
   const handlePreview = () => {
-    if (!isFormValid) return alert("Biometrik wajib (Berat, Tinggi, Usia) tidak valid.");
+    if (!isFormValid) return showToast("Data biometrik tidak lengkap atau belum valid.", "error");
     const { bmr, tdeeDasar } = calculateEnergi(formData.umur, formData.gender, formData.berat, formData.tinggi, formData.aktivitas);
     setPreviewData({ bmr: Math.round(bmr), tdee: Math.round(tdeeDasar) });
     setShowModal(true);
@@ -79,19 +86,23 @@ export default function PlannerPage() {
 
   const handleSavePlan = async () => {
     if (!session) {
-      alert("Silakan login melalui beranda terlebih dahulu untuk menyimpan.");
+      showToast("Silakan login terlebih dahulu untuk menyimpan plan.", "error");
       return;
     }
+    
+    // Simulate loading toast
+    showToast("Menyimpan rencana nutrisi Anda...", "info");
+
     try {
       const res = await fetch("/api/plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planData: hasil })
       });
-      if (res.ok) alert("Rencana Diet berhasil disimpan!");
-      else alert("Gagal menyimpan.");
+      if (res.ok) showToast("Rencana Diet berhasil disimpan!", "success");
+      else showToast("Gagal menyimpan. Coba lagi.", "error");
     } catch (e) {
-      alert("Terjadi kesalahan.");
+      showToast("Terjadi kesalahan sistem.", "error");
     }
   };
 
@@ -310,10 +321,11 @@ export default function PlannerPage() {
                           <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Target Tidur</p>
                           <p className="text-lg font-bold text-slate-800">{hasil.holistic.tidur_jam}</p>
                         </div>
-                        <div className="bg-slate-900 border border-slate-800 shadow-xl p-6 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden">
-                          <div className="w-12 h-12 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center mb-3 relative z-10"><Award className="w-6 h-6 text-emerald-400"/></div>
-                          <p className="text-[10px] text-emerald-400 uppercase font-bold tracking-widest mb-1 relative z-10">Skor Kesehatan AI</p>
-                          <p className="text-3xl font-black text-white tracking-tight relative z-10">{hasil.holistic.ai_health_score}<span className="text-sm font-bold text-slate-400 ml-1">/100</span></p>
+                        <div className="bg-white border border-emerald-200 shadow-sm p-6 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:border-emerald-300 transition-colors">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-full pointer-events-none group-hover:scale-110 transition-transform"></div>
+                          <div className="w-12 h-12 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center mb-3 relative z-10"><Award className="w-6 h-6 text-emerald-500"/></div>
+                          <p className="text-[10px] text-emerald-600 uppercase font-bold tracking-widest mb-1 relative z-10">Skor Kesehatan AI</p>
+                          <p className="text-3xl font-black text-slate-800 tracking-tight relative z-10">{hasil.holistic.ai_health_score}<span className="text-sm font-bold text-slate-400 ml-1">/100</span></p>
                         </div>
                       </div>
 
@@ -343,15 +355,15 @@ export default function PlannerPage() {
                   {activeTab === 'meals' && (
                     <motion.div key="meals" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="space-y-6">
                       
-                      <div className="rounded-2xl p-6 bg-slate-900 border border-slate-800 shadow-xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full pointer-events-none"></div>
+                      <div className="rounded-2xl p-6 bg-emerald-50 border border-emerald-100 shadow-sm relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/60 rounded-bl-full pointer-events-none"></div>
                          <div className="flex items-start gap-4 relative z-10">
-                            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/5">
-                              <Sparkles className="w-5 h-5 text-emerald-400" />
+                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0 border border-emerald-100 shadow-sm">
+                              <Sparkles className="w-5 h-5 text-emerald-500" />
                             </div>
                             <div>
-                              <h4 className="text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-widest">Wawasan Ilmiah AI</h4>
-                              <p className="text-sm font-medium text-white leading-relaxed">{hasil.prediksi.smart_nutrition_insight}</p>
+                              <h4 className="text-xs font-bold text-emerald-700 mb-1.5 uppercase tracking-widest">Wawasan Ilmiah AI</h4>
+                              <p className="text-sm font-medium text-emerald-900 leading-relaxed">{hasil.prediksi.smart_nutrition_insight}</p>
                             </div>
                          </div>
                       </div>
@@ -457,7 +469,19 @@ export default function PlannerPage() {
                               <div className="text-center px-4"><div className="text-[10px] text-rose-500 uppercase font-bold tracking-widest mb-1.5 flex items-center justify-center gap-1"><Flame className="w-3.5 h-3.5"/> Terbakar</div><div className="font-black text-rose-500 text-xl">~{ol.estimasi_kalori_terbakar}<span className="text-xs font-bold text-rose-400 ml-1">kcal</span></div></div>
                             </div>
                           </div>
-                          <p className="text-sm font-medium text-slate-600 leading-relaxed border-t border-slate-100 pt-5">{ol.alasan}</p>
+                          <div className="border-t border-slate-100 pt-5 space-y-3">
+                            <p className="text-sm font-medium text-slate-600 leading-relaxed">{ol.alasan}</p>
+                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Sumber Validasi</p>
+                              <p className="text-xs font-semibold text-slate-700">{ol.sumber_validasi}</p>
+                              {ol.literatur && (
+                                <>
+                                  <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-2">Referensi Jurnal (2022-2026)</p>
+                                  <p className="text-xs font-medium text-slate-600 italic leading-relaxed">{ol.literatur}</p>
+                                </>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </motion.div>
@@ -495,6 +519,27 @@ export default function PlannerPage() {
               </div>
               <button type="button" onClick={() => setShowModal(false)} className="w-full mt-8 py-4 rounded-xl bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-all relative z-10 shadow-lg active:scale-95">Tutup & Lanjutkan Form</button>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ================= TOAST NOTIFICATION ================= */}
+      <AnimatePresence>
+        {toast.show && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-3 px-5 py-4 rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-slate-100"
+          >
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+              toast.type === 'success' ? 'bg-emerald-50 text-emerald-500' : 
+              toast.type === 'error' ? 'bg-rose-50 text-rose-500' : 'bg-sky-50 text-sky-500'
+            }`}>
+              {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : 
+               toast.type === 'error' ? <AlertTriangle className="w-5 h-5" /> : <Info className="w-5 h-5" />}
+            </div>
+            <p className="text-sm font-bold text-slate-700 pr-4">{toast.message}</p>
           </motion.div>
         )}
       </AnimatePresence>

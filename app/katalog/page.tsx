@@ -40,77 +40,83 @@ export default function KatalogPage() {
   }, [searchTerm]);
 
   return (
-    <div className="min-h-screen pt-12 pb-24 px-6 lg:px-12 relative">
-      <div className="max-w-7xl mx-auto space-y-12 animate-[fadeInUp_0.8s_ease-out_forwards]">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-24">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-12 space-y-12 animate-[fadeInUp_0.8s_ease-out_forwards]">
         
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-[#0F2922]/20 pb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-200 pb-8">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 text-[#C4A47C] mb-4">
-              <Database className="w-5 h-5" />
-              <span className="text-xs font-bold uppercase tracking-widest">Tabel Komposisi Pangan Indonesia</span>
+            <div className="inline-flex items-center gap-2 text-emerald-600 mb-4 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
+              <Database className="w-4 h-4" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Tabel Komposisi Pangan Indonesia</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-serif text-[#0F2922] leading-tight">
-              Katalog <i className="italic font-light text-[#C4A47C]">Dataset</i>
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+              Katalog Dataset
             </h1>
-            <p className="mt-4 text-[#0F2922]/60 font-light leading-relaxed">
-              Menampilkan {mappedTkpiData.length} data bahan pangan lokal Indonesia yang telah melalui tahap preprocessing dan siap digunakan dalam perhitungan algoritma Greedy dan CSP.
+            <p className="mt-4 text-slate-500 font-medium leading-relaxed text-sm">
+              Menampilkan {mappedTkpiData.length} data bahan pangan lokal Indonesia yang telah melalui tahap preprocessing dan siap digunakan dalam perhitungan algoritma AI.
             </p>
           </div>
 
           {/* Search Input Klasik */}
           <div className="relative w-full md:w-80 group">
-            <Search className="absolute left-0 top-3 w-5 h-5 text-[#0F2922]/40 group-focus-within:text-[#0F2922] transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
             <input 
               type="text" 
               placeholder="Cari nama pangan atau kategori..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-transparent border-0 border-b border-[#0F2922]/20 focus:border-[#0F2922] focus:ring-0 pl-8 pb-2 pt-3 text-lg font-serif text-[#0F2922] placeholder:font-sans placeholder:text-sm placeholder:text-[#0F2922]/30 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 pl-12 py-3.5 text-sm font-semibold text-slate-800 placeholder:font-medium placeholder:text-slate-400 transition-all outline-none shadow-sm"
             />
           </div>
         </div>
 
-        {/* Tabel Data Gaya Editorial */}
-        <div className="w-full overflow-x-auto bg-white border border-[#0F2922]/10 shadow-[10px_10px_0px_0px_rgba(15,41,34,0.05)]">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-[#0F2922] text-[#F9F8F6]">
-                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest border-r border-[#F9F8F6]/10 w-16 text-center">ID</th>
-                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest border-r border-[#F9F8F6]/10">Nama Pangan</th>
-                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest border-r border-[#F9F8F6]/10 hidden md:table-cell">Kategori</th>
-                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest border-r border-[#F9F8F6]/10 text-right text-[#C4A47C]">Kalori (kkal)</th>
-                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest border-r border-[#F9F8F6]/10 text-right">Protein (g)</th>
-                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest border-r border-[#F9F8F6]/10 text-right">Lemak (g)</th>
-                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest text-right">Karbo (g)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.slice(0, 100).map((item, index) => ( // Tampilkan 100 data pertama agar tidak lag
-                <tr key={item.id} className="border-b border-[#0F2922]/5 hover:bg-[#0F2922]/[0.02] transition-colors">
-                  <td className="py-4 px-6 text-sm text-[#0F2922]/50 text-center">{item.id}</td>
-                  <td className="py-4 px-6 font-medium text-[#0F2922]">{item.nama}</td>
-                  <td className="py-4 px-6 text-sm text-[#0F2922]/60 hidden md:table-cell">{item.kategori}</td>
-                  <td className="py-4 px-6 font-serif text-lg text-[#0F2922] text-right font-bold bg-[#C4A47C]/5">{item.kalori}</td>
-                  <td className="py-4 px-6 text-sm text-[#0F2922]/80 text-right">{item.protein}</td>
-                  <td className="py-4 px-6 text-sm text-[#0F2922]/80 text-right">{item.lemak}</td>
-                  <td className="py-4 px-6 text-sm text-[#0F2922]/80 text-right">{item.karbohidrat}</td>
+        {/* Tabel Data Gaya Bersih */}
+        <div className="w-full overflow-hidden bg-white rounded-3xl border border-slate-200 shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500">
+                  <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-widest w-16 text-center">ID</th>
+                  <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-widest">Nama Pangan</th>
+                  <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-widest hidden md:table-cell">Kategori</th>
+                  <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-widest text-right text-emerald-600">Kalori (kkal)</th>
+                  <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-widest text-right">Protein (g)</th>
+                  <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-widest text-right">Lemak (g)</th>
+                  <th className="py-5 px-6 text-[10px] font-bold uppercase tracking-widest text-right">Karbo (g)</th>
                 </tr>
-              ))}
-              
-              {filteredData.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-[#0F2922]/40 font-serif text-lg">
-                    Data pangan tidak ditemukan.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredData.slice(0, 100).map((item) => ( 
+                  <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="py-4 px-6 text-sm font-medium text-slate-400 text-center">{item.id}</td>
+                    <td className="py-4 px-6 text-sm font-bold text-slate-800">{item.nama}</td>
+                    <td className="py-4 px-6 text-sm font-medium text-slate-500 hidden md:table-cell">
+                      <span className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs">{item.kategori}</span>
+                    </td>
+                    <td className="py-4 px-6 text-base font-black text-emerald-600 text-right bg-emerald-50/30">{item.kalori}</td>
+                    <td className="py-4 px-6 text-sm font-semibold text-slate-600 text-right">{item.protein}</td>
+                    <td className="py-4 px-6 text-sm font-semibold text-slate-600 text-right">{item.lemak}</td>
+                    <td className="py-4 px-6 text-sm font-semibold text-slate-600 text-right">{item.karbohidrat}</td>
+                  </tr>
+                ))}
+                
+                {filteredData.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="py-16 text-center">
+                      <Database className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                      <p className="text-slate-500 font-semibold">Data pangan tidak ditemukan.</p>
+                      <p className="text-slate-400 text-sm mt-1">Coba gunakan kata kunci lain.</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
           
           {filteredData.length > 100 && (
-            <div className="bg-[#0F2922]/[0.02] py-4 text-center text-xs font-bold text-[#0F2922]/50 uppercase tracking-widest border-t border-[#0F2922]/10">
-              Menampilkan 100 dari {filteredData.length} hasil (Gunakan pencarian untuk data spesifik)
+            <div className="bg-slate-50 py-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-200">
+              Menampilkan 100 dari {filteredData.length} hasil (Gunakan pencarian untuk spesifik)
             </div>
           )}
         </div>

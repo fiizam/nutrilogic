@@ -55,6 +55,7 @@ export interface OlahragaRekomendasi {
   intensitas: string;
   alasan: string;
   sumber_validasi: string;
+  literatur: string;
 }
 
 export interface RekomendasiMenu {

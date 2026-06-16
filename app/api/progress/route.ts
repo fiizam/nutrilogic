@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { berat } = await req.json();
+    const { berat, kepatuhanDiet, catatanKondisi } = await req.json();
 
     if (!berat) {
       return NextResponse.json({ message: "Berat is required" }, { status: 400 });
@@ -20,7 +20,9 @@ export async function POST(req: Request) {
     const log = await prisma.progressLog.create({
       data: {
         userId: (session.user as any).id,
-        berat: Number(berat)
+        berat: Number(berat),
+        kepatuhanDiet: kepatuhanDiet ?? true,
+        catatanKondisi: catatanKondisi || null,
       }
     });
 

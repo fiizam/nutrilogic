@@ -142,7 +142,8 @@ export function getRekomendasiOlahragaDinamis(berat: number, umur: number, bmi: 
       estimasi_kalori_terbakar: Math.round((latihan.met * berat * (targetDiet === 'naik' ? 60 : 45)) / 60),
       met: latihan.met, intensitas: latihan.intensitas,
       alasan: targetDiet === 'turun' ? `Optimalisasi Fat Loss. ${latihan.deskripsi}` : latihan.deskripsi,
-      sumber_validasi: latihan.sumber_validasi
+      sumber_validasi: latihan.sumber_validasi,
+      literatur: latihan.literatur
     };
   }).filter(Boolean) as OlahragaRekomendasi[];
 }

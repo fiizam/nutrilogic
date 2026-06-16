@@ -35,6 +35,8 @@ model ProgressLog {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  berat     Float
-  tanggal   DateTime @default(now())
+  berat          Float
+  kepatuhanDiet  Boolean  @default(true)
+  catatanKondisi String?
+  tanggal        DateTime @default(now())
 }
