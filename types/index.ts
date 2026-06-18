@@ -44,6 +44,7 @@ export interface MakananSiapSaji extends Olahan {
   nama_bahan: string;
   kategori: string;
   alternatif_olahan: string[];
+  gramasi?: number;
 }
 
 export interface OlahragaRekomendasi {
@@ -58,7 +59,8 @@ export interface OlahragaRekomendasi {
   literatur: string;
 }
 
-export interface RekomendasiMenu {
+export interface OpsiMenu {
+  id_opsi: string;
   menu: MakananSiapSaji[];
   totalKalori: number;
   totalProtein: number;
@@ -66,6 +68,14 @@ export interface RekomendasiMenu {
   totalLemak: number;
   totalNatrium: number;
   mape: number;
+}
+
+export type RekomendasiMenu = OpsiMenu[];
+
+export interface BMIInfo {
+  bmi: number;
+  kategori: string;
+  bbi: number;
 }
 
 export interface FormDataUser {
@@ -109,7 +119,7 @@ export interface HasilRekomendasi {
     bmr: number;
     tdeeDasar: number;
     tdeeTarget: number;
-    bmi: string;
+    bmi_info: BMIInfo;
   };
   macroTargets: MacroTargets;
   holistic: HolisticProtocol;

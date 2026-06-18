@@ -280,12 +280,15 @@ export default function DashboardPage() {
                       <div className="p-5 border-b border-slate-100">
                         <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5"><Utensils className="w-3.5 h-3.5"/> Rekomendasi Menu</h4>
                         <div className="space-y-4">
-                          {(['sarapan', 'siang', 'malam'] as const).map(sesi => (
+                          {(['sarapan', 'siang', 'malam'] as const).map(sesi => {
+                            // Support for both old format (object) and new format (array of options)
+                            const sesiData = Array.isArray(data.menu[sesi]) ? (data.menu[sesi] as any[])[0] : data.menu[sesi];
+                            return (
                             <div key={sesi}>
-                              <p className="text-[11px] font-bold text-slate-700 capitalize mb-1">{sesi} <span className="text-slate-400 font-medium">({Math.round(data.menu[sesi].totalKalori)} kkal)</span></p>
-                              {data.menu[sesi].menu.length > 0 ? (
+                              <p className="text-[11px] font-bold text-slate-700 capitalize mb-1">{sesi} <span className="text-slate-400 font-medium">({Math.round(sesiData?.totalKalori || 0)} kkal)</span></p>
+                              {sesiData?.menu?.length > 0 ? (
                                 <ul className="space-y-1">
-                                  {data.menu[sesi].menu.map((m, idx) => (
+                                  {sesiData.menu.map((m: any, idx: number) => (
                                     <li key={idx} className="text-xs text-slate-600 flex justify-between items-center bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
                                       <span className="font-medium truncate mr-2">{m.nama_masakan}</span>
                                       <span className="font-bold text-slate-800 shrink-0">{m.kalori} kkal</span>
@@ -296,7 +299,7 @@ export default function DashboardPage() {
                                 <p className="text-xs text-slate-400 italic">Tidak ada menu</p>
                               )}
                             </div>
-                          ))}
+                          )})}
                         </div>
                       </div>
 

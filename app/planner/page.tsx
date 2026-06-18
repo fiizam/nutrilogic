@@ -1,5 +1,5 @@
 'use client';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Loader2, Activity, Eye, X, Flame, Target, Utensils, 
@@ -44,6 +44,7 @@ export default function PlannerPage() {
   
   const [activeTab, setActiveTab] = useState<'dashboard' | 'meals' | 'workout'>('dashboard');
   const [activeMealTab, setActiveMealTab] = useState<'sarapan' | 'siang' | 'malam'>('sarapan');
+  const [activeMealOption, setActiveMealOption] = useState<number>(0);
   
   const [toast, setToast] = useState<{show: boolean, message: string, type: 'success'|'error'|'info'}>({ show: false, message: '', type: 'info' });
 
@@ -58,7 +59,56 @@ export default function PlannerPage() {
     ? 'stabil' 
     : (formData.berat > formData.target_berat ? 'turun' : 'naik');
 
-  const isFormValid = formData.berat > 0 && formData.tinggi > 0 && formData.umur > 0;
+  const isFormValid = formData.berat > 0 && formData.tinggi > 0 && formData.umur >= 18 && formData.umur <= 64;
+
+  const previewMetrics = useMemo(() => {
+    if (!formData.berat || !formData.tinggi || !formData.gender) return null;
+    const t = parseFloat(formData.tinggi.toString());
+    const b = parseFloat(formData.berat.toString());
+    if (t <= 0 || b <= 0) return null;
+
+    const imt = b / Math.pow(t / 100, 2);
+    let bbi = 0;
+    if ((formData.gender === 'pria' && t < 160) || (formData.gender !== 'pria' && t < 150)) {
+      bbi = t - 100;
+    } else {
+      bbi = 0.9 * (t - 100);
+    }
+
+    let kategori = '';
+    let colorClass = '';
+    let bgColorClass = '';
+    
+    if (imt < 18.5) {
+      kategori = 'BB kurang';
+      colorClass = 'text-amber-600';
+      bgColorClass = 'bg-amber-50 border-amber-100';
+    } else if (imt <= 22.9) {
+      kategori = 'BB normal';
+      colorClass = 'text-emerald-600';
+      bgColorClass = 'bg-emerald-50 border-emerald-100';
+    } else if (imt <= 24.9) {
+      kategori = 'Dengan risiko';
+      colorClass = 'text-orange-600';
+      bgColorClass = 'bg-orange-50 border-orange-100';
+    } else if (imt <= 29.9) {
+      kategori = 'Obese I';
+      colorClass = 'text-rose-600';
+      bgColorClass = 'bg-rose-50 border-rose-100';
+    } else {
+      kategori = 'Obese II';
+      colorClass = 'text-rose-700';
+      bgColorClass = 'bg-rose-100 border-rose-200';
+    }
+
+    return {
+      bmi: imt.toFixed(1),
+      bbi: bbi.toFixed(1),
+      kategori,
+      colorClass,
+      bgColorClass
+    };
+  }, [formData.berat, formData.tinggi, formData.gender]);
 
   const handlePreview = () => {
     if (!isFormValid) return showToast("Data biometrik tidak lengkap atau belum valid.", "error");
@@ -141,6 +191,31 @@ export default function PlannerPage() {
               <StandardInput label="Target" value={formData.target_berat} onChange={(v:number) => setFormData({...formData, target_berat: v})} unit="kg" placeholder="-" />
             </div>
 
+            <AnimatePresence>
+              {(formData.umur > 0 && (formData.umur < 18 || formData.umur > 64)) && (
+                <motion.div initial={{ opacity: 0, height: 0, scale: 0.95 }} animate={{ opacity: 1, height: 'auto', scale: 1 }} exit={{ opacity: 0, height: 0, scale: 0.95 }} className="bg-rose-50 p-3.5 rounded-xl border border-rose-200 flex items-start gap-3">
+                  <AlertTriangle className="w-4 h-4 text-rose-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs font-medium text-rose-700 leading-relaxed"><strong>Batas Usia Tidak Valid:</strong> Sistem perhitungan kalori ini dirancang khusus untuk dewasa (18-64 tahun) sesuai panduan WHO. Penggunaan pada anak atau lansia memerlukan pengawasan dokter.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {previewMetrics && (
+                <motion.div initial={{ opacity: 0, height: 0, scale: 0.95 }} animate={{ opacity: 1, height: 'auto', scale: 1 }} exit={{ opacity: 0, height: 0, scale: 0.95 }} className="flex gap-4">
+                  <div className={`flex-1 p-4 rounded-2xl border ${previewMetrics.bgColorClass} flex flex-col justify-center items-center relative overflow-hidden transition-all shadow-sm`}>
+                    <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${previewMetrics.colorClass}`}>IMT: {previewMetrics.kategori}</p>
+                    <p className="text-3xl font-black text-slate-800 tracking-tight">{previewMetrics.bmi}</p>
+                  </div>
+                  <div className="flex-1 p-4 rounded-2xl border border-slate-200 bg-white flex flex-col justify-center items-center shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-slate-50 rounded-bl-full pointer-events-none"></div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-slate-400 relative z-10">Berat Ideal (BBI)</p>
+                    <p className="text-3xl font-black text-slate-800 tracking-tight relative z-10">{previewMetrics.bbi}<span className="text-sm font-bold text-slate-400 ml-1">kg</span></p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div>
               <div className="flex bg-slate-100 p-1.5 rounded-xl">
                 <button type="button" onClick={() => setFormData({...formData, gender: 'pria'})} className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${formData.gender === 'pria' ? 'bg-white text-emerald-600 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'}`}>Pria</button>
@@ -173,9 +248,9 @@ export default function PlannerPage() {
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Target Mode Diet</p>
                 <div className="flex items-center gap-2">
-                  {derivedTargetDiet === 'turun' ? <span className="text-emerald-600 font-bold text-sm flex items-center gap-1.5"><ArrowDownToLine className="w-4 h-4"/> Defisit</span> :
-                   derivedTargetDiet === 'naik' ? <span className="text-sky-600 font-bold text-sm flex items-center gap-1.5"><ArrowUpToLine className="w-4 h-4"/> Surplus</span> :
-                   <span className="text-slate-700 font-bold text-sm flex items-center gap-1.5"><Scale className="w-4 h-4"/> Stabil</span>}
+                  {derivedTargetDiet === 'turun' ? <span className="text-emerald-600 font-bold text-sm flex items-center gap-1.5"><ArrowDownToLine className="w-4 h-4"/> Penurunan Berat Badan</span> :
+                   derivedTargetDiet === 'naik' ? <span className="text-sky-600 font-bold text-sm flex items-center gap-1.5"><ArrowUpToLine className="w-4 h-4"/> Peningkatan Berat Badan</span> :
+                   <span className="text-slate-700 font-bold text-sm flex items-center gap-1.5"><Scale className="w-4 h-4"/> Mempertahankan Berat Badan</span>}
                 </div>
               </div>
               <button type="button" onClick={handlePreview} title="Preview TDEE" className="text-slate-400 bg-slate-50 p-2.5 border border-slate-200 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors">
@@ -310,7 +385,12 @@ export default function PlannerPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="bg-white border border-slate-200 shadow-sm p-6 rounded-3xl flex flex-col items-center justify-center">
+                          <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center mb-3"><Activity className="w-6 h-6 text-rose-500"/></div>
+                          <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 text-center">IMT / Ideal ({hasil.energi.bmi_info.kategori})</p>
+                          <p className="text-2xl font-black text-slate-800 tracking-tight">{hasil.energi.bmi_info.bmi} <span className="text-sm font-bold text-slate-400 ml-1">({hasil.energi.bmi_info.bbi}kg)</span></p>
+                        </div>
                         <div className="bg-white border border-slate-200 shadow-sm p-6 rounded-3xl flex flex-col items-center justify-center">
                           <div className="w-12 h-12 bg-cyan-50 rounded-2xl flex items-center justify-center mb-3"><Droplets className="w-6 h-6 text-cyan-500"/></div>
                           <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Target Hidrasi</p>
@@ -319,7 +399,7 @@ export default function PlannerPage() {
                         <div className="bg-white border border-slate-200 shadow-sm p-6 rounded-3xl flex flex-col items-center justify-center">
                           <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-3"><Moon className="w-6 h-6 text-indigo-500"/></div>
                           <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Target Tidur</p>
-                          <p className="text-lg font-bold text-slate-800">{hasil.holistic.tidur_jam}</p>
+                          <p className="text-lg font-bold text-slate-800 text-center">{hasil.holistic.tidur_jam}</p>
                         </div>
                         <div className="bg-white border border-emerald-200 shadow-sm p-6 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:border-emerald-300 transition-colors">
                           <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-full pointer-events-none group-hover:scale-110 transition-transform"></div>
@@ -338,9 +418,9 @@ export default function PlannerPage() {
                           </div>
                         </div>
                         <div className="space-y-6">
-                          {[ { label: "Target Protein", val: (hasil.menu.sarapan.totalProtein+hasil.menu.siang.totalProtein+hasil.menu.malam.totalProtein), tar: hasil.macroTargets.protein, color: "bg-rose-500", bgTrack: "bg-rose-50" },
-                             { label: "Target Lemak", val: (hasil.menu.sarapan.totalLemak+hasil.menu.siang.totalLemak+hasil.menu.malam.totalLemak), tar: hasil.macroTargets.lemak, color: "bg-amber-500", bgTrack: "bg-amber-50" },
-                             { label: "Target Karbohidrat", val: (hasil.menu.sarapan.totalKarbo+hasil.menu.siang.totalKarbo+hasil.menu.malam.totalKarbo), tar: hasil.macroTargets.karbo, color: "bg-sky-500", bgTrack: "bg-sky-50" },
+                          {[ { label: "Target Protein", val: (hasil.menu.sarapan[0].totalProtein+hasil.menu.siang[0].totalProtein+hasil.menu.malam[0].totalProtein), tar: hasil.macroTargets.protein, color: "bg-rose-500", bgTrack: "bg-rose-50" },
+                             { label: "Target Lemak", val: (hasil.menu.sarapan[0].totalLemak+hasil.menu.siang[0].totalLemak+hasil.menu.malam[0].totalLemak), tar: hasil.macroTargets.lemak, color: "bg-amber-500", bgTrack: "bg-amber-50" },
+                             { label: "Target Karbohidrat", val: (hasil.menu.sarapan[0].totalKarbo+hasil.menu.siang[0].totalKarbo+hasil.menu.malam[0].totalKarbo), tar: hasil.macroTargets.karbo, color: "bg-sky-500", bgTrack: "bg-sky-50" },
                           ].map(m => (
                             <div key={m.label}>
                               <div className="flex justify-between text-sm text-slate-800 mb-2 font-bold"><span>{m.label}</span><span className="text-slate-500">{Math.round(m.val)}g <span className="text-slate-300 font-normal">/</span> {m.tar}g</span></div>
@@ -392,55 +472,62 @@ export default function PlannerPage() {
                         >
                           {(() => {
                             const sesi = activeMealTab;
+                            const options = hasil.menu[sesi] as any[];
+                            const activeOption = options[activeMealOption] || options[0];
                             const targetSesi = Math.round(hasil.energi.tdeeTarget * (sesi === 'siang' ? 0.4 : 0.3));
-                            const persentase = Math.min((hasil.menu[sesi].totalKalori / targetSesi) * 100, 100);
+                            const persentase = Math.min((activeOption.totalKalori / targetSesi) * 100, 100);
 
                             return (
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden relative">
                                 <div className="absolute top-0 left-0 h-1.5 bg-gradient-to-r from-emerald-400 to-teal-500" style={{ width: `${persentase}%` }}></div>
                                 <div className="p-6 lg:p-8">
-                                  <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-5">
+                                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-slate-100 pb-5 gap-4">
                                     <h5 className="text-xl font-bold text-slate-800 capitalize flex items-center gap-3">
                                       <span className="p-2 bg-slate-50 border border-slate-100 rounded-lg">
                                         {sesi === 'sarapan' ? <Coffee className="w-5 h-5 text-slate-500"/> : sesi === 'siang' ? <Utensils className="w-5 h-5 text-slate-500"/> : <Moon className="w-5 h-5 text-slate-500"/>}
                                       </span> 
                                       {sesi}
                                     </h5>
-                                    <div className="text-right bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 shadow-sm"><span className="text-lg font-black text-slate-800">{Math.round(hasil.menu[sesi].totalKalori)}</span><span className="text-[10px] uppercase font-bold text-slate-400 ml-1.5">/ {targetSesi} kcal</span></div>
+                                    
+                                    {/* TABS OPSI 1, 2, 3 */}
+                                    <div className="flex bg-slate-100 p-1 rounded-xl">
+                                      {options.map((_, i) => (
+                                        <button 
+                                          key={i}
+                                          type="button"
+                                          onClick={() => setActiveMealOption(i)}
+                                          className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase transition-all ${activeMealOption === i ? 'bg-white text-emerald-600 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'}`}
+                                        >
+                                          Opsi {i+1}
+                                        </button>
+                                      ))}
+                                    </div>
+                                    
+                                    <div className="text-right bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 shadow-sm"><span className="text-lg font-black text-slate-800">{Math.round(activeOption.totalKalori)}</span><span className="text-[10px] uppercase font-bold text-slate-400 ml-1.5">/ {targetSesi} kcal</span></div>
                                   </div>
 
                                   <div className="space-y-4">
-                                    {hasil.menu[sesi].menu.length === 0 ? (
+                                    {activeOption.menu.length === 0 ? (
                                        <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-sm font-medium text-slate-500 flex items-center gap-3"><Info className="w-5 h-5 text-slate-400"/> Tidak ada kandidat lolos filter CSP.</div>
                                     ) : (
-                                      hasil.menu[sesi].menu.map((item, i) => (
+                                      activeOption.menu.map((item: any, i: number) => (
                                         <div key={i} className="bg-white border border-slate-200 shadow-sm p-6 rounded-2xl flex flex-col gap-4 hover:shadow-md hover:border-slate-300 transition-all">
                                           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                                             <div>
-                                              <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-widest mb-2 inline-block">Basis: {item.nama_bahan}</span>
+                                              <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded text-[10px] font-bold uppercase tracking-widest mb-2 inline-block">Kategori: {item.kategori}</span>
                                               <p className="font-bold text-slate-800 text-lg leading-tight mb-1.5">{item.nama_masakan}</p>
-                                              <p className="text-sm font-medium text-slate-500">Sajian: {item.ukuran_sajian} <span className="mx-2 text-slate-300">•</span> Na: {item.natrium}mg</p>
+                                              <p className="text-sm font-medium text-slate-500">Porsi Tepat: <span className="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{item.gramasi ? `${item.gramasi}g` : item.ukuran_sajian}</span> <span className="mx-2 text-slate-300">•</span> Pro: {item.protein}g</p>
                                             </div>
-                                            <div className="bg-emerald-50 px-4 py-3 rounded-2xl border border-emerald-100 text-center min-w-[100px]">
-                                              <span className="font-black text-2xl text-emerald-600 block">{item.kalori}</span>
-                                              <span className="text-[10px] font-bold uppercase text-emerald-500/70">kcal</span>
+                                            <div className="bg-slate-50 px-4 py-3 rounded-2xl border border-slate-200 text-center min-w-[100px]">
+                                              <span className="font-black text-2xl text-slate-700 block">{item.kalori}</span>
+                                              <span className="text-[10px] font-bold uppercase text-slate-400">kcal</span>
                                             </div>
                                           </div>
                                           
-                                          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2">
-                                            <p className="text-sm text-slate-600 leading-relaxed font-medium"><span className="text-indigo-600 font-bold mr-1">Insight:</span> {item.alasan}</p>
+                                          <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2 flex items-start gap-3">
+                                            <Sparkles className="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" />
+                                            <p className="text-sm text-slate-600 leading-relaxed font-medium">{item.alasan}</p>
                                           </div>
-                                          
-                                          {item.alternatif_olahan.length > 0 && (
-                                            <div className="mt-1">
-                                              <p className="text-[10px] text-slate-400 uppercase flex items-center gap-1.5 mb-2.5 font-bold tracking-widest"><ArrowRightLeft className="w-3.5 h-3.5"/> Substitusi Makanan</p>
-                                              <div className="flex flex-wrap gap-2">
-                                                {item.alternatif_olahan.slice(0,3).map(alt => (
-                                                  <span key={alt} className="text-xs font-semibold px-3 py-1.5 bg-sky-50 rounded-lg border border-sky-100 text-sky-700">{alt}</span>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          )}
                                         </div>
                                       ))
                                     )}

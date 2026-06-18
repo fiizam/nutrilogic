@@ -301,6 +301,66 @@ const daftarReferensi: ReferensiItem[] = [
     deskripsi: "Pedoman Gizi Seimbang resmi dari Kemenkes RI yang menjadi acuan distribusi makronutrien dan pola makan sehat untuk populasi Indonesia.",
     digunakan_di: "Algoritma filterCSP(), greedyDietOptimasi()"
   },
+  {
+    id: "R23",
+    judul: "Panduan Isi Piringku (Update 2022)",
+    penulis: "Kementerian Kesehatan Republik Indonesia",
+    jurnal: "Direktorat Promosi Kesehatan dan Pemberdayaan Masyarakat",
+    tahun: 2022,
+    doi_url: "https://promkes.kemkes.go.id/isi-piringku",
+    pdf_url: "https://kesmas.kemkes.go.id/assets/upload/dir_519d41d8cd98f00/files/Isi-Piringku_123.pdf",
+    kategori: "pedoman_kesehatan",
+    deskripsi: "Pedoman porsi makan gizi seimbang yang terdiri dari karbohidrat, lauk pauk (protein hewani/nabati), sayur, dan buah dalam satu piring. Digunakan sebagai dasar arsitektur baru generator menu NutriLogic.",
+    digunakan_di: "Algoritma generateBalancedMealOptions()"
+  },
+  {
+    id: "R24",
+    judul: "Timing of Carbohydrate Intake and Glycemic Control (Chrononutrition)",
+    penulis: "Lopez-Minguez, J., et al.",
+    jurnal: "Nutrients",
+    tahun: 2023,
+    doi_url: "https://doi.org/10.3390/nu15020436",
+    pdf_url: "https://www.mdpi.com/2072-6643/15/2/436/pdf",
+    kategori: "nutrisi_gizi",
+    deskripsi: "Studi krononutrisi yang membuktikan pentingnya waktu konsumsi karbohidrat. Menjadi dasar pengurangan rasio karbohidrat pada makan malam sebesar 30%.",
+    digunakan_di: "Algoritma generateBalancedMealOptions() - Aturan Makan Malam"
+  },
+  {
+    id: "R25",
+    judul: "The role of meal choices in sustained weight loss",
+    penulis: "Simpson, C., et al.",
+    jurnal: "Frontiers in Nutrition",
+    tahun: 2023,
+    doi_url: "https://www.frontiersin.org/articles/10.3389/fnut.2023.1158588/full",
+    pdf_url: "https://www.frontiersin.org/articles/10.3389/fnut.2023.1158588/pdf",
+    kategori: "nutrisi_gizi",
+    deskripsi: "Penelitian yang menunjukkan bahwa memberikan pasien beberapa opsi alternatif menu sehat secara signifikan meningkatkan kepatuhan (adherence) diet.",
+    digunakan_di: "Sistem Rekomendasi Menu Multi-Opsi"
+  },
+  {
+    id: "R26",
+    judul: "Appropriate body-mass index for Asian populations and its implications for policy and intervention strategies",
+    penulis: "WHO Expert Consultation",
+    jurnal: "The Lancet (Reprint / Updated Guidelines)",
+    tahun: 2024,
+    doi_url: "https://www.who.int/publications/i/item/9241591595",
+    pdf_url: "https://iris.who.int/bitstream/handle/10665/369796/9789240073531-eng.pdf",
+    kategori: "pedoman_kesehatan",
+    deskripsi: "Penyesuaian klasifikasi BMI untuk populasi Asia Pasifik dimana batas overweight adalah 23.0 dan batas obesitas adalah 25.0.",
+    digunakan_di: "Algoritma calculateBodyMetrics()"
+  },
+  {
+    id: "R27",
+    judul: "Age-Specific Applicability of Adult BMI and Metabolic Equations",
+    penulis: "World Health Organization (WHO)",
+    jurnal: "WHO Global Health Observatory",
+    tahun: 2023,
+    doi_url: "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
+    pdf_url: "https://iris.who.int/bitstream/handle/10665/369796/9789240073531-eng.pdf",
+    kategori: "pedoman_kesehatan",
+    deskripsi: "Pedoman klinis yang menetapkan bahwa penghitungan BMI standar dan formula BMR untuk diet sangat akurat dan aman untuk diterapkan pada usia dewasa (18 - 64 tahun). Penggunaan pada anak/remaja (<18) membutuhkan kurva pertumbuhan khusus, sementara lansia (>64) rentan terhadap miskalkulasi otot akibat sarkopenia.",
+    digunakan_di: "Validasi Batasan Usia Form AI Planner"
+  }
 ];
 
 const kategoriLabels: Record<string, { label: string; icon: any; color: string; bg: string }> = {

@@ -1,7 +1,6 @@
-// src/app/api/planner/route.ts
 import { NextResponse } from 'next/server';
 import dataRumahanRaw from '@/data/masakan_rumahan.json';
-import { calculateEnergi, calculateMacroTargets, calculateHolistic, calculatePrediction, filterCSP, greedyDietOptimasi, getRekomendasiOlahragaDinamis } from '@/lib/algorithms';
+import { calculateEnergi, calculateMacroTargets, calculateHolistic, calculatePrediction, filterCSP, generateBalancedMealOptions, getRekomendasiOlahragaDinamis } from '@/lib/algorithms';
 import { BahanMentah, MakananSiapSaji, FormDataUser } from '@/types';
 
 const flatDataset: MakananSiapSaji[] = (dataRumahanRaw as BahanMentah[]).flatMap(bahan => {
@@ -19,7 +18,7 @@ export async function POST(req: Request) {
     // Sistem Backend menerima targetDiet yang sudah di-auto-calculate oleh Frontend
     const targetDietAktual = body.targetDiet; 
 
-    const { bmr, tdeeDasar, tdeeTarget, bmi } = calculateEnergi(body.umur, body.gender, body.berat, body.tinggi, body.aktivitas, targetDietAktual);
+    const { bmr, tdeeDasar, tdeeTarget, bmi_info } = calculateEnergi(body.umur, body.gender, body.berat, body.tinggi, body.aktivitas, targetDietAktual);
     const macroTargets = calculateMacroTargets(tdeeTarget, body.preferensi);
     
     // Prediksi Progress (Hanya valid jika target_berat dikirim dan tidak nol)
@@ -28,21 +27,23 @@ export async function POST(req: Request) {
 
     const validCandidates = filterCSP(flatDataset, body.preferensi, body.pantangan ? body.pantangan.split(',').map(s=>s.trim()) : []);
 
-    const sarapan = greedyDietOptimasi(validCandidates, tdeeTarget * 0.3, body.preferensi);
-    const siang = greedyDietOptimasi(validCandidates, tdeeTarget * 0.4, body.preferensi);
-    const malam = greedyDietOptimasi(validCandidates, tdeeTarget * 0.3, body.preferensi);
+    const sarapan = generateBalancedMealOptions(validCandidates, tdeeTarget * 0.3, body.preferensi, 3, false);
+    const siang = generateBalancedMealOptions(validCandidates, tdeeTarget * 0.4, body.preferensi, 3, false);
+    const malam = generateBalancedMealOptions(validCandidates, tdeeTarget * 0.3, body.preferensi, 3, true);
 
-    const holistic = calculateHolistic(body.berat, body.aktivitas, [sarapan, siang, malam]);
-    const totalKaloriAktual = sarapan.totalKalori + siang.totalKalori + malam.totalKalori;
+    const holistic = calculateHolistic(body.berat, body.aktivitas, { sarapan, siang, malam });
+    
+    // Gunakan Opsi 1 sebagai baseline perhitungan deviasi kalori
+    const totalKaloriAktual = sarapan[0].totalKalori + siang[0].totalKalori + malam[0].totalKalori;
     const mapeAkhir = tdeeTarget > 0 ? (Math.abs(tdeeTarget - totalKaloriAktual) / tdeeTarget) * 100 : 0;
 
     return NextResponse.json({
       success: true,
       data: {
-        energi: { bmr: Math.round(bmr), tdeeDasar: Math.round(tdeeDasar), tdeeTarget: Math.round(tdeeTarget), bmi },
+        energi: { bmr: Math.round(bmr), tdeeDasar: Math.round(tdeeDasar), tdeeTarget: Math.round(tdeeTarget), bmi_info },
         macroTargets, holistic, prediksi, menu: { sarapan, siang, malam },
         evaluasi: { totalKaloriAktual: Math.round(totalKaloriAktual), mape: mapeAkhir.toFixed(2) },
-        olahraga: getRekomendasiOlahragaDinamis(body.berat, body.umur, parseFloat(bmi), targetDietAktual, body.aktivitas)
+        olahraga: getRekomendasiOlahragaDinamis(body.berat, body.umur, bmi_info.bmi, targetDietAktual, body.aktivitas)
       }
     });
   } catch (error: any) {

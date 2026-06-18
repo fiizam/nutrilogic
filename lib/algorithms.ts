@@ -4,6 +4,28 @@ import latihanDatasetRaw from '../data/latihan_fisik.json';
 
 const latihanDataset = latihanDatasetRaw as any[];
 
+export function calculateBodyMetrics(berat_kg: number, tinggi_cm: number, gender: string) {
+  const tinggi_m = tinggi_cm / 100;
+  const imt = berat_kg / (tinggi_m * tinggi_m);
+  
+  let kategori_imt = "BB normal";
+  if (imt < 18.5) kategori_imt = "BB kurang";
+  else if (imt >= 18.5 && imt <= 22.9) kategori_imt = "BB normal";
+  else if (imt >= 23.0 && imt <= 24.9) kategori_imt = "Dengan risiko";
+  else if (imt >= 25.0 && imt <= 29.9) kategori_imt = "Obese I";
+  else if (imt >= 30.0) kategori_imt = "Obese II";
+
+  // Broca Index Modifikasi untuk BBI
+  let bbi = 0;
+  if ((gender === 'pria' && tinggi_cm < 160) || (gender !== 'pria' && tinggi_cm < 150)) {
+    bbi = tinggi_cm - 100;
+  } else {
+    bbi = 0.9 * (tinggi_cm - 100);
+  }
+
+  return { bmi: Number(imt.toFixed(1)), kategori: kategori_imt, bbi: Math.round(bbi) };
+}
+
 export function calculateEnergi(umur: number, gender: string, berat: number, tinggi: number, levelAktivitas: string, targetDiet: string = 'stabil') {
   let bmr = gender === 'pria' 
     ? (10 * berat) + (6.25 * tinggi) - (5 * umur) + 5
@@ -22,8 +44,8 @@ export function calculateEnergi(umur: number, gender: string, berat: number, tin
     tdeeTarget = tdeeDasar + 500;
   }
 
-  const bmi = berat / Math.pow(tinggi / 100, 2);
-  return { bmr, tdeeDasar, tdeeTarget, bmi: bmi.toFixed(1) };
+  const bmi_info = calculateBodyMetrics(berat, tinggi, gender);
+  return { bmr, tdeeDasar, tdeeTarget, bmi_info };
 }
 
 export function calculatePrediction(beratSekarang: number, targetBerat: number, targetDiet: string, tdeeTarget: number, tdeeDasar: number, preferensi: string): PredictionEngine {
@@ -40,16 +62,15 @@ export function calculatePrediction(beratSekarang: number, targetBerat: number, 
 
   if (targetDiet === 'stabil' || selisih_kg === 0 || beratSekarang === targetBerat) {
     mingguEstimasi = 0; bulanEstimasi = 0; kgPerMinggu = 0;
-    pesan_realistis = "Anda berada pada fase maintenance. Fokus pada kesehatan metabolisme.";
+    pesan_realistis = "Anda berada pada fase Mempertahankan Berat Badan. Fokus pada kesehatan metabolisme.";
   } else if (targetDiet === 'turun' && kgPerMinggu > 1.0) {
     warning = true;
     pesan_realistis = "Peringatan: Penurunan > 1kg/minggu berisiko muscle atrophy (Mayo Clinic). Direkomendasikan memperkecil defisit kalori.";
   } else if (targetDiet === 'naik' && kgPerMinggu > 0.5) {
     warning = true;
-    pesan_realistis = "Peringatan: Kenaikan > 0.5kg/minggu berisiko penumpukan lemak viseral (ACSM). Kurangi surplus kalori.";
+    pesan_realistis = "Peringatan: Peningkatan > 0.5kg/minggu berisiko penumpukan lemak viseral (ACSM). Kurangi surplus kalori.";
   }
 
-  // FITUR BARU: Generate AI Smart Insight Validasi Medis
   let smart_insight = "";
   if (targetDiet === 'turun') {
     if (preferensi === 'tinggi_protein') smart_insight = "Validasi Harvard Health: Pilihan ideal. Protein tinggi menjaga massa otot saat defisit kalori dan meningkatkan rasa kenyang (Thermic Effect of Food).";
@@ -58,9 +79,9 @@ export function calculatePrediction(beratSekarang: number, targetBerat: number, 
   } else if (targetDiet === 'naik') {
     if (preferensi === 'tinggi_protein') smart_insight = "Validasi ACSM: Sangat disarankan. Kombinasi surplus kalori dan tinggi protein memastikan kenaikan massa dominan ke otot (hipertrofi), bukan lemak.";
     else if (preferensi === 'seimbang') smart_insight = "Validasi NIH: Pola seimbang mendukung ketersediaan glikogen (karbohidrat) untuk energi latihan angkat beban.";
-    else smart_insight = "Low-Carb kurang direkomendasikan untuk bulking karena tubuh membutuhkan insulin dan glikogen untuk proses anabolik.";
+    else smart_insight = "Low-Carb kurang direkomendasikan untuk peningkatan berat karena tubuh membutuhkan insulin dan glikogen untuk proses anabolik.";
   } else {
-    smart_insight = "Validasi WHO: Maintenance (Stabil) paling optimal dengan pola gizi seimbang untuk keberlanjutan hidup sehat jangka panjang.";
+    smart_insight = "Validasi WHO: Mempertahankan (Stabil) paling optimal dengan pola gizi seimbang untuk keberlanjutan hidup sehat jangka panjang.";
   }
 
   return {
@@ -68,7 +89,7 @@ export function calculatePrediction(beratSekarang: number, targetBerat: number, 
     bulan_estimasi: Number(bulanEstimasi.toFixed(1)),
     perubahan_per_minggu: Number(kgPerMinggu.toFixed(2)),
     selisih_kg: Number(selisih_kg.toFixed(1)),
-    kalori_harian_status: targetDiet === 'turun' ? `Defisit ${Math.round(kaloriGapHarian)} kcal` : targetDiet === 'naik' ? `Surplus ${Math.round(kaloriGapHarian)} kcal` : `Maintenance`,
+    kalori_harian_status: targetDiet === 'turun' ? `Penurunan Berat Badan (${Math.round(kaloriGapHarian)} kcal)` : targetDiet === 'naik' ? `Peningkatan Berat Badan (+${Math.round(kaloriGapHarian)} kcal)` : `Mempertahankan Berat Badan`,
     rekomendasi_konsistensi: targetDiet === 'stabil' ? "Pertahankan makronutrisi dan gaya hidup saat ini." : `Konsistensi 80/20 rule (diet ketat 80%, fleksibel 20%). Latihan beban wajib.`,
     pesan_realistis,
     smart_nutrition_insight: smart_insight,
@@ -76,20 +97,37 @@ export function calculatePrediction(beratSekarang: number, targetBerat: number, 
   };
 }
 
-export function calculateMacroTargets(tdeeTarget: number, preferensi: string): MacroTargets {
+export function calculateMacroTargets(tdeeTarget: number, preferensi: string, waktuMakanRasio?: number): MacroTargets {
   let pPro, pLem, pKar;
   if (preferensi === 'tinggi_protein') { pPro = 0.4; pLem = 0.3; pKar = 0.3; }
   else if (preferensi === 'rendah_karbo') { pPro = 0.35; pLem = 0.45; pKar = 0.2; }
   else { pPro = 0.3; pLem = 0.3; pKar = 0.4; } 
-  return { protein: Math.round((tdeeTarget * pPro)/4), lemak: Math.round((tdeeTarget * pLem)/9), karbo: Math.round((tdeeTarget * pKar)/4) };
+  
+  let target = tdeeTarget;
+  if (waktuMakanRasio) target = tdeeTarget * waktuMakanRasio;
+
+  return { 
+    protein: Math.round((target * pPro)/4), 
+    lemak: Math.round((target * pLem)/9), 
+    karbo: Math.round((target * pKar)/4) 
+  };
 }
 
-export function calculateHolistic(berat: number, aktivitas: string, hasilMenu: RekomendasiMenu[]): HolisticProtocol {
+export function calculateHolistic(berat: number, aktivitas: string, hasilMenu: any): HolisticProtocol {
   let airMl = berat * 35;
   if (aktivitas === 'active') airMl += 600;
   else if (aktivitas === 'moderate') airMl += 300;
+  
   let totalScore = 0, count = 0;
-  hasilMenu.forEach(sesi => { sesi.menu.forEach(item => { totalScore += item.health_score; count++; }); });
+  // Calculate avg score across all options generated
+  Object.values(hasilMenu).forEach((waktu: any) => {
+    if (Array.isArray(waktu)) {
+      waktu.forEach((opsi: any) => {
+        opsi.menu.forEach((item: any) => { totalScore += item.health_score; count++; });
+      });
+    }
+  });
+
   const avgScore = count > 0 ? Math.round(totalScore / count) : 0;
   let tidur = aktivitas === 'active' ? "8-9 Jam (Muscle Recovery)" : "7-8 Jam";
   return { air_liter: Number((airMl / 1000).toFixed(1)), tidur_jam: tidur, ai_health_score: avgScore };
@@ -101,45 +139,131 @@ export function filterCSP(dataset: MakananSiapSaji[], preferensi: string, pantan
       const gabungan = `${item.nama_masakan} ${item.nama_bahan}`.toLowerCase();
       if (pantangan.some(p => p !== "" && gabungan.includes(p.toLowerCase()))) return false; 
     }
-    if (preferensi === 'rendah_karbo' && item.karbohidrat > 30 && item.kategori !== 'Serealia') return false;
+    // We remove the low carb strict filtering here because dynamic gramasi will handle low carb by drastically reducing portions.
     return true; 
   });
 }
 
-export function greedyDietOptimasi(kandidatMakanan: MakananSiapSaji[], targetKalori: number, preferensi: string): RekomendasiMenu {
-  let sorted = [...kandidatMakanan];
-  if (preferensi === 'tinggi_protein') sorted.sort((a, b) => (b.protein/b.kalori) - (a.protein/a.kalori));
-  else if (preferensi === 'rendah_karbo') sorted.sort((a, b) => (a.karbohidrat/a.kalori) - (b.karbohidrat/b.kalori));
-  else sorted.sort(() => Math.random() - 0.5); 
+function getRandomItem(arr: MakananSiapSaji[]): MakananSiapSaji {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-  let totalKalori = 0, totalProtein = 0, totalKarbo = 0, totalLemak = 0, totalNatrium = 0;
-  let menuTerpilih: MakananSiapSaji[] = [];
+export function generateBalancedMealOptions(
+  kandidatMakanan: MakananSiapSaji[], 
+  targetKalori: number, 
+  preferensi: string, 
+  jumlahOpsi: number = 3,
+  isMakanMalam: boolean = false
+): RekomendasiMenu {
+  
+  // Klasifikasi Kategori Piringku
+  const karboPool = kandidatMakanan.filter(m => m.kategori.toLowerCase().includes('serealia') || m.kategori.toLowerCase().includes('umbi'));
+  const proHePool = kandidatMakanan.filter(m => m.kategori.toLowerCase().includes('daging') || m.kategori.toLowerCase().includes('ikan') || m.kategori.toLowerCase().includes('telur'));
+  const proNaPool = kandidatMakanan.filter(m => m.kategori.toLowerCase().includes('kacang'));
+  const sayurPool = kandidatMakanan.filter(m => m.kategori.toLowerCase().includes('sayur') || m.kategori.toLowerCase().includes('buah'));
 
-  for (let makanan of sorted) {
-    if (menuTerpilih.some(m => m.nama_bahan === makanan.nama_bahan)) continue; 
-    if (totalKalori + makanan.kalori <= targetKalori + 80) {
-      menuTerpilih.push(makanan);
-      totalKalori += makanan.kalori; totalProtein += makanan.protein;
-      totalKarbo += makanan.karbohidrat; totalLemak += makanan.lemak;
-      totalNatrium += makanan.natrium;
-    }
-    if (totalKalori >= targetKalori - 80) break;
+  let options: any[] = [];
+  
+  // Tentukan alokasi makro berdasarkan preferensi dan chrononutrition
+  let pKar = 0.4, pPro = 0.3, pLem = 0.3; // Default balanced
+  if (preferensi === 'tinggi_protein') { pKar = 0.3; pPro = 0.4; pLem = 0.3; }
+  else if (preferensi === 'rendah_karbo') { pKar = 0.2; pPro = 0.35; pLem = 0.45; }
+
+  // Chrononutrition: Kurangi karbohidrat 30% saat makan malam, alihkan ke protein dan lemak nabati
+  if (isMakanMalam) {
+    const carbReduction = pKar * 0.3;
+    pKar -= carbReduction;
+    pPro += carbReduction * 0.5;
+    pLem += carbReduction * 0.5;
   }
 
-  const mape = targetKalori > 0 ? (Math.abs(targetKalori - totalKalori) / targetKalori) * 100 : 0;
-  return { menu: menuTerpilih, totalKalori, totalProtein, totalKarbo, totalLemak, totalNatrium, mape };
+  const targetKarboKcal = targetKalori * pKar;
+  const targetProHeKcal = targetKalori * (pPro * 0.6); // 60% pro from animal
+  const targetProNaKcal = targetKalori * ((pPro * 0.4) + (pLem * 0.5)); // plant protein + fats
+  const targetSayurKcal = targetKalori * (pLem * 0.5 + pKar * 0.1);
+
+  for (let i = 0; i < jumlahOpsi; i++) {
+    // Fallback if empty pool
+    const fallbackKarbo = karboPool[0] || kandidatMakanan[0];
+    const fallbackProHe = proHePool[0] || kandidatMakanan[0];
+    const fallbackProNa = proNaPool[0] || fallbackProHe;
+    const fallbackSayur = sayurPool[0] || kandidatMakanan[0];
+
+    const karbo = getRandomItem(karboPool) || fallbackKarbo;
+    const proHe = getRandomItem(proHePool) || fallbackProHe;
+    const proNa = getRandomItem(proNaPool) || fallbackProNa;
+    const sayur = getRandomItem(sayurPool) || fallbackSayur;
+
+    const buildPlateItem = (item: MakananSiapSaji, targetKcal: number) => {
+      // Data in dataset is mostly per 100g (ukuran_sajian contains '100g')
+      const kcalPer100g = item.kalori > 0 ? item.kalori : 100; // prevent div by 0
+      const gramasi = Math.max(10, Math.round((targetKcal / kcalPer100g) * 100)); // Min 10g
+      const multiplier = gramasi / 100;
+
+      return {
+        ...item,
+        gramasi,
+        kalori: Math.round(item.kalori * multiplier),
+        protein: Number((item.protein * multiplier).toFixed(1)),
+        lemak: Number((item.lemak * multiplier).toFixed(1)),
+        karbohidrat: Number((item.karbohidrat * multiplier).toFixed(1)),
+        natrium: Math.round(item.natrium * multiplier)
+      };
+    };
+
+    const finalKarbo = buildPlateItem(karbo, targetKarboKcal);
+    const finalProHe = buildPlateItem(proHe, targetProHeKcal);
+    const finalProNa = buildPlateItem(proNa, targetProNaKcal);
+    const finalSayur = buildPlateItem(sayur, Math.max(50, targetSayurKcal)); // min 50 kcal sayur
+
+    const menu = [finalKarbo, finalProHe, finalProNa, finalSayur];
+    
+    let totalKalori = 0, totalProtein = 0, totalKarbo = 0, totalLemak = 0, totalNatrium = 0;
+    menu.forEach(m => {
+      totalKalori += m.kalori;
+      totalProtein += m.protein;
+      totalKarbo += m.karbohidrat;
+      totalLemak += m.lemak;
+      totalNatrium += m.natrium;
+    });
+
+    const mape = (Math.abs(targetKalori - totalKalori) / targetKalori) * 100;
+
+    options.push({
+      id_opsi: `opsi-${i+1}`,
+      menu,
+      totalKalori: Math.round(totalKalori),
+      totalProtein: Number(totalProtein.toFixed(1)),
+      totalKarbo: Number(totalKarbo.toFixed(1)),
+      totalLemak: Number(totalLemak.toFixed(1)),
+      totalNatrium: Math.round(totalNatrium),
+      mape: Number(mape.toFixed(1))
+    });
+  }
+
+  return options;
 }
 
 export function getRekomendasiOlahragaDinamis(berat: number, umur: number, bmi: number, targetDiet: string, aktivitas: string): OlahragaRekomendasi[] {
   let kandidatID = targetDiet === 'turun' ? ['E02', 'E06'] : targetDiet === 'naik' ? ['E04', 'E05'] : ['E01', 'E04'];
-  if ((aktivitas === 'sedentary' || umur > 50 || bmi >= 25) && targetDiet === 'turun') kandidatID = ['E01', 'E03'];
+  
+  // Progression untuk Sedentary
+  let baseDurasi = targetDiet === 'naik' ? 60 : 45;
+  if (aktivitas === 'sedentary') {
+    baseDurasi = 30; // Pemula mulai dari 30 menit
+    kandidatID = targetDiet === 'turun' ? ['E01', 'E03'] : ['E01', 'E07']; // Low impact
+  } else if (umur > 50 || bmi >= 25) {
+    baseDurasi = 30; // Joint friendly
+    kandidatID = ['E08', 'E10']; // Berenang, Mobilitas
+  }
+
   return kandidatID.map(id => {
     const latihan = latihanDataset.find(l => l.id === id);
     if(!latihan) return null;
     return {
       nama: latihan.nama_latihan, kategori: latihan.kategori,
-      durasi_menit: targetDiet === 'naik' ? 60 : 45,
-      estimasi_kalori_terbakar: Math.round((latihan.met * berat * (targetDiet === 'naik' ? 60 : 45)) / 60),
+      durasi_menit: baseDurasi,
+      estimasi_kalori_terbakar: Math.round((latihan.met * berat * baseDurasi) / 60),
       met: latihan.met, intensitas: latihan.intensitas,
       alasan: targetDiet === 'turun' ? `Optimalisasi Fat Loss. ${latihan.deskripsi}` : latihan.deskripsi,
       sumber_validasi: latihan.sumber_validasi,
