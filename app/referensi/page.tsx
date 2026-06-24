@@ -352,14 +352,14 @@ const daftarReferensi: ReferensiItem[] = [
   },
   {
     id: "R27",
-    judul: "Age-Specific Applicability of Adult BMI and Metabolic Equations",
-    penulis: "World Health Organization (WHO)",
-    jurnal: "WHO Global Health Observatory",
-    tahun: 2023,
-    doi_url: "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
-    pdf_url: "https://iris.who.int/bitstream/handle/10665/369796/9789240073531-eng.pdf",
+    judul: "Peraturan Menteri Kesehatan Republik Indonesia Nomor 28 Tahun 2019 tentang Angka Kecukupan Gizi yang Dianjurkan untuk Masyarakat Indonesia",
+    penulis: "Kementerian Kesehatan Republik Indonesia",
+    jurnal: "Berita Negara Republik Indonesia Tahun 2019 Nomor 920",
+    tahun: 2019,
+    doi_url: "-",
+    pdf_url: "https://peraturan.bpk.go.id/Details/123984/permenkes-no-28-tahun-2019",
     kategori: "pedoman_kesehatan",
-    deskripsi: "Pedoman klinis yang menetapkan bahwa penghitungan BMI standar dan formula BMR untuk diet sangat akurat dan aman untuk diterapkan pada usia dewasa (18 - 64 tahun). Penggunaan pada anak/remaja (<18) membutuhkan kurva pertumbuhan khusus, sementara lansia (>64) rentan terhadap miskalkulasi otot akibat sarkopenia.",
+    deskripsi: "Pedoman resmi yang menetapkan standar kebutuhan gizi dan pembagian kelompok usia di Indonesia. Kelompok usia 19-49 tahun ditetapkan sebagai kategori dewasa produktif utama untuk perhitungan kecukupan kalori harian.",
     digunakan_di: "Validasi Batasan Usia Form AI Planner"
   },
   {
@@ -385,6 +385,18 @@ const daftarReferensi: ReferensiItem[] = [
     kategori: "nutrisi_gizi",
     deskripsi: "Jurnal nutrisi yang menganalisis efektivitas diet rendah karbohidrat dalam mengontrol kadar insulin secara optimal dan mempercepat pembakaran lemak selama program penurunan berat badan.",
     digunakan_di: "Rekomendasi Preferensi Makanan (Rendah Karbohidrat)"
+  },
+  {
+    id: "R30",
+    judul: "Body Mass Index - BMI and Obesity (Underweight Classification)",
+    penulis: "World Health Organization (WHO)",
+    jurnal: "WHO Global Health Observatory",
+    tahun: 2021,
+    doi_url: "https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index",
+    pdf_url: "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
+    kategori: "pedoman_kesehatan",
+    deskripsi: "Pedoman klinis klasifikasi Indeks Massa Tubuh (IMT/BMI) yang mendefinisikan BMI < 18.5 sebagai kondisi Kurus (Underweight). Pedoman ini merupakan acuan medis untuk pelarangan program penurunan berat badan yang menargetkan angka di bawah ambang batas sehat karena berpotensi merusak sistem imun dan menyebabkan malnutrisi.",
+    digunakan_di: "Validasi Target Berat Badan Form AI Planner"
   }
 ];
 

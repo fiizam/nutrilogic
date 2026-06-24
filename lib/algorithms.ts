@@ -148,6 +148,59 @@ function getRandomItem(arr: MakananSiapSaji[]): MakananSiapSaji {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function toReadableFraction(value: number): string {
+  const whole = Math.floor(value);
+  const fraction = value - whole;
+  
+  let fractionStr = "";
+  let newWhole = whole;
+
+  if (fraction < 0.15) {
+    fractionStr = "";
+  } else if (fraction >= 0.15 && fraction < 0.4) {
+    fractionStr = "1/4";
+  } else if (fraction >= 0.4 && fraction < 0.65) {
+    fractionStr = "1/2";
+  } else if (fraction >= 0.65 && fraction < 0.85) {
+    fractionStr = "3/4";
+  } else {
+    fractionStr = "";
+    newWhole += 1;
+  }
+
+  if (newWhole === 0) {
+    // If it's very small, default to at least 1/4 to avoid showing 0
+    return fractionStr === "" ? "1/4" : fractionStr;
+  } else {
+    return fractionStr === "" ? `${newWhole}` : `${newWhole} ${fractionStr}`;
+  }
+}
+
+function calculateURT(ukuran_sajian: string, gramasi: number): string {
+  if (!ukuran_sajian) return `${gramasi}g`;
+  
+  // Try to parse format like "1 Centong (100g)" or "0.5 Porsi (50g)"
+  const regex = /^([\d\.,]+)\s+([^\(]+)\s*\(([\d\.,]+)\s*[a-zA-Z]+\)$/i;
+  const match = ukuran_sajian.match(regex);
+  
+  if (match) {
+    const unitAmount = parseFloat(match[1].replace(',', '.'));
+    const unitName = match[2].trim();
+    const baseGrams = parseFloat(match[3].replace(',', '.'));
+    
+    if (!isNaN(unitAmount) && !isNaN(baseGrams) && baseGrams > 0) {
+      const ratio = gramasi / baseGrams;
+      let calculatedAmount = unitAmount * ratio;
+      
+      const readableAmount = toReadableFraction(calculatedAmount);
+      
+      return `${readableAmount} ${unitName}`;
+    }
+  }
+  
+  return `${gramasi}g`;
+}
+
 export function generateBalancedMealOptions(
   kandidatMakanan: MakananSiapSaji[], 
   targetKalori: number, 
@@ -199,10 +252,13 @@ export function generateBalancedMealOptions(
       const kcalPer100g = item.kalori > 0 ? item.kalori : 100; // prevent div by 0
       const gramasi = Math.max(10, Math.round((targetKcal / kcalPer100g) * 100)); // Min 10g
       const multiplier = gramasi / 100;
+      
+      const urt_string = calculateURT(item.ukuran_sajian, gramasi);
 
       return {
         ...item,
         gramasi,
+        urt_string,
         kalori: Math.round(item.kalori * multiplier),
         protein: Number((item.protein * multiplier).toFixed(1)),
         lemak: Number((item.lemak * multiplier).toFixed(1)),

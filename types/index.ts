@@ -45,6 +45,7 @@ export interface MakananSiapSaji extends Olahan {
   kategori: string;
   alternatif_olahan: string[];
   gramasi?: number;
+  urt_string?: string;
 }
 
 export interface OlahragaRekomendasi {

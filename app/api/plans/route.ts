@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { planData } = await req.json();
+    const { planData, nama } = await req.json();
 
     if (!planData) {
       return NextResponse.json({ message: "Plan data is required" }, { status: 400 });
@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     const plan = await prisma.nutritionPlan.create({
       data: {
         userId: (session.user as any).id,
+        nama: nama || null,
         data: JSON.stringify(planData)
       }
     });

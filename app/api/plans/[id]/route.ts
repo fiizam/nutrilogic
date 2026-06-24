@@ -30,6 +30,18 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       where: { id }
     });
 
+    // Check if the user has any other plans left
+    const remainingPlans = await prisma.nutritionPlan.count({
+      where: { userId: existingPlan.userId }
+    });
+
+    // If no plans left, clear all progress logs as requested
+    if (remainingPlans === 0) {
+      await prisma.progressLog.deleteMany({
+        where: { userId: existingPlan.userId }
+      });
+    }
+
     return NextResponse.json({ message: "Plan deleted successfully" }, { status: 200 });
   } catch (error) {
     console.error("Delete plan error:", error);

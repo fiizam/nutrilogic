@@ -3,9 +3,10 @@
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Activity, Plus, TrendingDown, Calendar, Scale, Award, Trash2, Utensils, Flame, Info, Power } from "lucide-react";
+import { Activity, Plus, TrendingDown, Calendar, Scale, Award, Trash2, Utensils, Flame, Info, Power, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { HasilRekomendasi } from "@/types";
+import PlanResult from "@/components/PlanResult";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -18,6 +19,7 @@ export default function DashboardPage() {
   const [newKepatuhan, setNewKepatuhan] = useState(true);
   const [newCatatan, setNewCatatan] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -240,88 +242,45 @@ export default function DashboardPage() {
             <div className="space-y-6 max-h-[800px] overflow-y-auto pr-2">
               {plans.length === 0 ? (
                 <p className="text-sm text-slate-500 text-center py-4">Anda belum pernah menyimpan rencana diet.</p>
-              ) : (
-                plans.map((plan) => {
+              ) : selectedPlanId ? (
+                // --- DETAIL VIEW ---
+                (() => {
+                  const plan = plans.find(p => p.id === selectedPlanId);
+                  if (!plan) return null;
                   const data = JSON.parse(plan.data) as HasilRekomendasi;
                   return (
-                    <div key={plan.id} className="rounded-3xl border border-slate-200 shadow-sm overflow-hidden bg-white">
-                      {/* Card Header */}
-                      <div className="p-5 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
-                        <div className="flex justify-between items-start mb-2 relative z-10">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Calendar className="w-3 h-3"/> {new Date(plan.createdAt).toLocaleDateString()}</span>
-                          <button onClick={() => handleDeletePlan(plan.id)} className="text-slate-400 hover:text-red-500 transition-colors p-1" title="Hapus Plan">
+                    <PlanResult 
+                      hasil={data}
+                      biometrics={{ berat: currentBerat || 0, target_berat: currentBerat || 0 }}
+                      derivedTargetDiet="stabil"
+                      isSavedView={true}
+                      onClose={() => setSelectedPlanId(null)}
+                    />
+                  );
+                })()
+              ) : (
+                // --- LIST VIEW ---
+                <div className="space-y-3">
+                  {plans.map((plan) => {
+                    const data = JSON.parse(plan.data) as HasilRekomendasi;
+                    return (
+                      <div key={plan.id} onClick={() => setSelectedPlanId(plan.id)} className="group cursor-pointer bg-white border border-slate-200 hover:border-emerald-400 hover:shadow-md transition-all rounded-2xl p-4 flex items-center justify-between">
+                        <div className="flex flex-col gap-1">
+                          <h4 className="font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">{plan.nama || `Plan ${new Date(plan.createdAt).toLocaleDateString('id-ID')}`}</h4>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1"><Calendar className="w-3 h-3"/> {new Date(plan.createdAt).toLocaleDateString('id-ID')}</span>
+                            <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">{data.energi.tdeeTarget} kkal</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button onClick={(e) => { e.stopPropagation(); handleDeletePlan(plan.id); }} className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Plan">
                             <Trash2 className="w-4 h-4"/>
                           </button>
                         </div>
-                        <div className="flex items-end justify-between relative z-10">
-                          <div>
-                            <p className="font-black text-slate-800 text-3xl">{data.energi.tdeeTarget} <span className="text-xs font-bold text-slate-400 uppercase">kkal/hari</span></p>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded border inline-block mt-2 ${data.prediksi.warning ? 'bg-red-50 text-red-600 border-red-200' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>{data.prediksi.kalori_harian_status}</span>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Skor Kesehatan</p>
-                            <span className="font-black text-xl text-emerald-600">{data.holistic.ai_health_score}</span>
-                          </div>
-                        </div>
                       </div>
-
-                      {/* Card Body - Foods */}
-                      <div className="p-5 border-b border-slate-100">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5"><Utensils className="w-3.5 h-3.5"/> Rekomendasi Menu</h4>
-                        <div className="space-y-4">
-                          {(['sarapan', 'siang', 'malam'] as const).map(sesi => {
-                            // Support for both old format (object) and new format (array of options)
-                            const sesiData = Array.isArray(data.menu[sesi]) ? (data.menu[sesi] as any[])[0] : data.menu[sesi];
-                            return (
-                            <div key={sesi}>
-                              <p className="text-[11px] font-bold text-slate-700 capitalize mb-1">{sesi} <span className="text-slate-400 font-medium">({Math.round(sesiData?.totalKalori || 0)} kkal)</span></p>
-                              {sesiData?.menu?.length > 0 ? (
-                                <ul className="space-y-1">
-                                  {sesiData.menu.map((m: any, idx: number) => (
-                                    <li key={idx} className="text-xs text-slate-600 flex justify-between items-center bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
-                                      <span className="font-medium truncate mr-2">{m.nama_masakan}</span>
-                                      <span className="font-bold text-slate-800 shrink-0">{m.kalori} kkal</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              ) : (
-                                <p className="text-xs text-slate-400 italic">Tidak ada menu</p>
-                              )}
-                            </div>
-                          )})}
-                        </div>
-                      </div>
-
-                      {/* Card Body - Workouts */}
-                      <div className="p-5 border-b border-slate-100 bg-slate-50">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5"><Flame className="w-3.5 h-3.5"/> Rekomendasi Olahraga</h4>
-                        {data.olahraga.length > 0 ? (
-                          <div className="space-y-2">
-                            {data.olahraga.map((ol, idx) => (
-                              <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
-                                <div className="flex justify-between items-start mb-1">
-                                  <span className="text-xs font-bold text-indigo-600 pr-2">{ol.nama}</span>
-                                  <span className="text-[10px] font-bold bg-indigo-50 text-indigo-500 px-2 py-0.5 rounded uppercase tracking-wider whitespace-nowrap">{ol.kategori}</span>
-                                </div>
-                                <div className="flex justify-between items-center text-xs text-slate-500 border-b border-slate-100 pb-2">
-                                  <span>{ol.durasi_menit} menit</span>
-                                  <span className="font-bold text-rose-500">~{ol.estimasi_kalori_terbakar} kkal</span>
-                                </div>
-                                <div className="text-[10px] text-slate-500 space-y-1">
-                                  <p><span className="font-bold text-slate-600">Sumber:</span> {ol.sumber_validasi}</p>
-                                  {ol.literatur && <p className="italic leading-relaxed line-clamp-2" title={ol.literatur}><span className="font-bold text-slate-600 not-italic">Jurnal:</span> {ol.literatur}</p>}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-xs text-slate-400 italic">Tidak ada olahraga disarankan.</p>
-                        )}
-                      </div>
-
-                    </div>
-                  );
-                })
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>
