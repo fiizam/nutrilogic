@@ -1,5 +1,5 @@
 'use client';
-import { useState, FormEvent, useMemo } from 'react';
+import { useState, FormEvent, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Loader2, Activity, Eye, X, Flame, Target, Utensils, 
@@ -7,7 +7,7 @@ import {
   Coffee, Footprints, Zap, ArrowDownToLine, Scale, ArrowUpToLine,
   TrendingDown, TrendingUp, AlertTriangle, CalendarDays, Sparkles, LayoutDashboard, Dumbbell, Apple, ActivityIcon, Save, Lock
 } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { FormDataUser, HasilRekomendasi } from '@/types';
 import { calculateEnergi } from '@/lib/algorithms'; 
 import Link from 'next/link';
@@ -47,6 +47,51 @@ export default function PlannerPage() {
   const [activeMealOption, setActiveMealOption] = useState<number>(0);
   
   const [toast, setToast] = useState<{show: boolean, message: string, type: 'success'|'error'|'info'}>({ show: false, message: '', type: 'info' });
+  const [showDraftModal, setShowDraftModal] = useState(false);
+
+  // Check for existing draft on mount
+  useEffect(() => {
+    try {
+      const draft = localStorage.getItem('nutrivis_planner_draft');
+      if (draft) {
+        const parsed = JSON.parse(draft);
+        if (parsed && (parsed.formData?.berat > 0 || parsed.hasil)) {
+          setShowDraftModal(true);
+        }
+      }
+    } catch (e) {
+      // Abaikan jika browser memblokir akses penyimpanan lokal
+    }
+  }, []);
+
+  // Auto-save draft when data changes
+  useEffect(() => {
+    if (formData.berat > 0 || formData.tinggi > 0 || hasil) {
+      try {
+        localStorage.setItem('nutrivis_planner_draft', JSON.stringify({ formData, hasil, activeTab }));
+      } catch (e) {}
+    }
+  }, [formData, hasil, activeTab]);
+
+  const handleRestoreDraft = () => {
+    try {
+      const draft = localStorage.getItem('nutrivis_planner_draft');
+      if (draft) {
+        const parsed = JSON.parse(draft);
+        if (parsed.formData) setFormData(parsed.formData);
+        if (parsed.hasil) setHasil(parsed.hasil);
+        if (parsed.activeTab) setActiveTab(parsed.activeTab);
+      }
+    } catch(e) {}
+    setShowDraftModal(false);
+  };
+
+  const handleClearDraft = () => {
+    try {
+      localStorage.removeItem('nutrivis_planner_draft');
+    } catch (e) {}
+    setShowDraftModal(false);
+  };
 
   const showToast = (message: string, type: 'success'|'error'|'info' = 'info') => {
     setToast({ show: true, message, type });
@@ -157,10 +202,37 @@ export default function PlannerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row font-sans text-slate-900 selection:bg-emerald-200 selection:text-emerald-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-emerald-200 selection:text-emerald-900">
       
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group z-20">
+            <div className="w-9 h-9 rounded-full flex items-center justify-center bg-black text-white group-hover:bg-emerald-600 transition-colors">
+              <Activity className="w-5 h-5" />
+            </div>
+            <span className="text-xl font-black tracking-tight text-slate-800">Nutri<span className="text-emerald-500">Logic</span></span>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2 z-10">
+            <Link href="/" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Beranda</Link>
+            <Link href="/planner" className="text-sm font-bold text-emerald-600 border-b-2 border-emerald-500 pb-0.5 transition-colors">AI Planner</Link>
+            <Link href="/dashboard" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Riwayat</Link>
+            <Link href="/referensi" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Katalog</Link>
+          </nav>
+
+          <div className="flex items-center gap-3 z-20">
+            <Link href="/profile" className="px-5 py-2.5 rounded-full text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">Profil</Link>
+            <button onClick={() => signOut()} className="px-5 py-2.5 rounded-full text-sm font-bold text-white bg-slate-900 hover:bg-red-500 hover:text-white transition-colors shadow-sm">
+              Keluar
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex flex-col lg:flex-row pt-[73px] flex-1">
       {/* ================= PANEL KIRI: FORM SIDEBAR ================= */}
-      <aside className="w-full lg:w-[400px] lg:h-screen lg:sticky lg:top-0 bg-white border-r border-slate-200 shadow-sm flex flex-col z-20">
+      <aside className="w-full lg:w-[400px] lg:h-[calc(100vh-73px)] lg:sticky lg:top-[73px] bg-white border-r border-slate-200 shadow-sm flex flex-col z-20">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white">
           <div>
             <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -259,12 +331,40 @@ export default function PlannerPage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 block">Preferensi Makro</label>
-              <select value={formData.preferensi} onChange={(e) => setFormData({...formData, preferensi: e.target.value as any})} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all appearance-none cursor-pointer">
-                <option value="seimbang">Makro Seimbang (Disarankan)</option>
-                <option value="rendah_karbo">Rendah Karbohidrat</option>
-                <option value="tinggi_protein">Tinggi Protein</option>
-              </select>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3 block">Preferensi Makanan</label>
+              <div className="flex flex-col gap-3">
+                {[
+                  { 
+                    id: 'seimbang', 
+                    label: 'Gizi Seimbang', 
+                    desc: derivedTargetDiet === 'stabil' ? 'Sangat Disarankan untuk menjaga kebugaran tubuh secara keseluruhan.' : derivedTargetDiet === 'turun' ? 'Disarankan untuk defisit kalori harian yang aman dan nyaman.' : 'Proporsi makro ideal (50% Karbo, 20% Pro, 30% Lemak).',
+                    icon: Apple 
+                  },
+                  { 
+                    id: 'tinggi_protein', 
+                    label: 'Tinggi Protein', 
+                    desc: derivedTargetDiet === 'turun' ? 'Sangat Disarankan secara medis untuk mencegah penyusutan otot saat diet.' : derivedTargetDiet === 'naik' ? 'Sangat Disarankan untuk membangun massa otot secara signifikan.' : 'Sangat baik untuk perbaikan sel otot pasca olahraga.',
+                    icon: Dumbbell 
+                  },
+                  { 
+                    id: 'rendah_karbo', 
+                    label: 'Rendah Karbohidrat', 
+                    desc: derivedTargetDiet === 'turun' ? 'Sangat Disarankan untuk mengontrol sensitivitas insulin dan bakar lemak.' : 'Cocok untuk diet khusus mengurangi lonjakan gula darah harian.',
+                    icon: Flame 
+                  }
+                ].map((opt) => (
+                  <button type="button" key={opt.id} onClick={() => setFormData({...formData, preferensi: opt.id as any})}
+                    className={`p-3 rounded-xl border text-left flex items-start gap-3 transition-all ${formData.preferensi === opt.id ? 'bg-emerald-50 border-emerald-200 shadow-sm ring-1 ring-emerald-500/20' : 'bg-white border-slate-200 hover:border-slate-300'}`}>
+                    <div className={`p-2 rounded-lg mt-0.5 ${formData.preferensi === opt.id ? 'bg-emerald-100' : 'bg-slate-50 border border-slate-100'}`}>
+                      <opt.icon className={`w-4 h-4 ${formData.preferensi === opt.id ? 'text-emerald-600' : 'text-slate-400'}`} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className={`text-sm font-bold ${formData.preferensi === opt.id ? 'text-emerald-800' : 'text-slate-700'}`}>{opt.label}</span>
+                      <span className={`text-[10px] sm:text-[11px] font-medium leading-relaxed mt-0.5 ${formData.preferensi === opt.id ? 'text-emerald-600' : 'text-slate-500'}`}>{opt.desc}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div>
@@ -595,16 +695,45 @@ export default function PlannerPage() {
               </div>
               <div className="space-y-4 relative z-10">
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Tingkat Metabolisme Basal (BMR)</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Tingkat Metabolisme Basal (BMR)</p>
+                  <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">Kalori yang dibakar tubuh walau kamu rebahan / tidur seharian (fungsi organ dasar).</p>
                   <p className="text-3xl font-black text-slate-800">{previewData.bmr} <span className="text-sm font-bold text-slate-400 ml-1">kcal</span></p>
                 </div>
                 <div className="bg-emerald-500 p-6 rounded-2xl border border-emerald-600 shadow-lg shadow-emerald-500/20 text-white relative overflow-hidden">
                   <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-400 rounded-full blur-2xl"></div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-100 mb-2 relative z-10">Total Pengeluaran Energi Harian (TDEE)</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-100 mb-1 relative z-10">Total Pengeluaran Energi Harian (TDEE)</p>
+                  <p className="text-[11px] text-emerald-50 mb-3 leading-relaxed relative z-10">Total kalori asli yang kamu butuhkan setiap hari (BMR + gaya hidup & olahragamu).</p>
                   <p className="text-4xl font-black relative z-10 tracking-tight">{previewData.tdee} <span className="text-base font-bold text-emerald-200 tracking-normal ml-1">kcal</span></p>
                 </div>
               </div>
               <button type="button" onClick={() => setShowModal(false)} className="w-full mt-8 py-4 rounded-xl bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-all relative z-10 shadow-lg active:scale-95">Tutup & Lanjutkan Form</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ================= MODAL DRAFT ================= */}
+      <AnimatePresence>
+        {showDraftModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0 }} className="w-full max-w-md p-8 relative overflow-hidden bg-white border border-slate-200 rounded-[2rem] shadow-2xl text-center">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-[100px] pointer-events-none"></div>
+              
+              <div className="w-16 h-16 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-5 relative z-10">
+                <Save className="w-8 h-8 text-emerald-500" />
+              </div>
+              
+              <h3 className="text-xl font-bold text-slate-800 tracking-tight mb-2 relative z-10">Draf Tersimpan Ditemukan</h3>
+              <p className="text-sm font-medium text-slate-500 mb-8 relative z-10">Kami menemukan sesi rencana nutrisi Anda yang belum selesai sebelumnya. Ingin melanjutkannya?</p>
+              
+              <div className="flex gap-3 relative z-10">
+                <button onClick={handleClearDraft} className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors">
+                  Buat Baru
+                </button>
+                <button onClick={handleRestoreDraft} className="flex-1 py-3.5 bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 text-white text-sm font-bold rounded-xl transition-all">
+                  Lanjutkan Draf
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -630,7 +759,7 @@ export default function PlannerPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
+      </div>
     </div>
   );
 }

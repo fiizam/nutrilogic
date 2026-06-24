@@ -8,8 +8,12 @@ export default function SplashScreen() {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Memeriksa apakah animasi sudah pernah dijalankan di sesi ini
-    const hasSeenSplash = sessionStorage.getItem("hasSeenSplash");
+    let hasSeenSplash = false;
+    try {
+      hasSeenSplash = !!sessionStorage.getItem("hasSeenSplash");
+    } catch (e) {
+      // Abaikan jika browser memblokir sessionStorage (contoh: Incognito Mode)
+    }
     
     if (hasSeenSplash) {
       setIsVisible(false);
@@ -19,7 +23,9 @@ export default function SplashScreen() {
     // Set waktu animasi (misal 1.5 detik)
     const timer = setTimeout(() => {
       setIsVisible(false);
-      sessionStorage.setItem("hasSeenSplash", "true");
+      try {
+        sessionStorage.setItem("hasSeenSplash", "true");
+      } catch (e) {}
     }, 1500);
 
     return () => clearTimeout(timer);

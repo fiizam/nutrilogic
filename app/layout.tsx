@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
-      <body className="bg-[#050505] text-white antialiased">
+    <html lang="id" suppressHydrationWarning>
+      <body className="bg-[#050505] text-white antialiased" suppressHydrationWarning>
         <NextAuthSessionProvider>
           <SplashScreen />
           <ProgressBarProvider />

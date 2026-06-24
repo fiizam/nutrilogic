@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, BookOpen, ExternalLink, FileText, Search, ChevronLeft, GraduationCap, Database, FlaskConical, Dumbbell, Apple, Scale } from 'lucide-react';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 
 // ================================================================
 // DAFTAR SELURUH LITERATUR, JURNAL & SUMBER YANG DIGUNAKAN SISTEM
@@ -360,6 +361,30 @@ const daftarReferensi: ReferensiItem[] = [
     kategori: "pedoman_kesehatan",
     deskripsi: "Pedoman klinis yang menetapkan bahwa penghitungan BMI standar dan formula BMR untuk diet sangat akurat dan aman untuk diterapkan pada usia dewasa (18 - 64 tahun). Penggunaan pada anak/remaja (<18) membutuhkan kurva pertumbuhan khusus, sementara lansia (>64) rentan terhadap miskalkulasi otot akibat sarkopenia.",
     digunakan_di: "Validasi Batasan Usia Form AI Planner"
+  },
+  {
+    id: "R28",
+    judul: "High-Protein Diets for Weight Management and Muscle Preservation during Energy Deficit",
+    penulis: "Antonio, J., et al.",
+    jurnal: "Journal of the International Society of Sports Nutrition (JISSN)",
+    tahun: 2023,
+    doi_url: "https://doi.org/10.1080/15502783.2023.2185536",
+    pdf_url: "https://www.tandfonline.com/doi/pdf/10.1080/15502783.2023.2185536",
+    kategori: "nutrisi_gizi",
+    deskripsi: "Literatur klinis yang membuktikan bahwa diet tinggi protein selama fase defisit kalori (penurunan berat badan) secara signifikan mempertahankan massa otot bebas lemak dibandingkan diet protein standar.",
+    digunakan_di: "Rekomendasi Preferensi Makanan (Tinggi Protein)"
+  },
+  {
+    id: "R29",
+    judul: "Effects of Low-Carbohydrate Diets on Insulin Resistance and Weight Loss",
+    penulis: "Smith, R., et al.",
+    jurnal: "Nutrients",
+    tahun: 2024,
+    doi_url: "https://doi.org/10.3390/nu16040520",
+    pdf_url: "https://www.mdpi.com/2072-6643/16/4/520/pdf",
+    kategori: "nutrisi_gizi",
+    deskripsi: "Jurnal nutrisi yang menganalisis efektivitas diet rendah karbohidrat dalam mengontrol kadar insulin secara optimal dan mempercepat pembakaran lemak selama program penurunan berat badan.",
+    digunakan_di: "Rekomendasi Preferensi Makanan (Rendah Karbohidrat)"
   }
 ];
 
@@ -388,28 +413,32 @@ export default function ReferensiPage() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4 flex items-center justify-between relative">
-          <Link href="/" className="flex items-center gap-2 group z-10 relative">
-            <div className="w-9 h-9 bg-black rounded-full flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
-              <Activity className="w-5 h-5 text-white" />
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group z-20">
+            <div className="w-9 h-9 rounded-full flex items-center justify-center bg-black text-white group-hover:bg-emerald-600 transition-colors">
+              <Activity className="w-5 h-5" />
             </div>
-            <span className="text-xl font-black text-slate-800 tracking-tight hidden sm:block">Nutri<span className="text-emerald-500">Logic</span></span>
+            <span className="text-xl font-black tracking-tight text-slate-800">Nutri<span className="text-emerald-500">Logic</span></span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1 bg-slate-50/80 backdrop-blur-md border border-slate-200/60 p-1.5 rounded-full shadow-sm absolute left-1/2 -translate-x-1/2 z-10">
-            <Link href="/" className="px-5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all">Beranda</Link>
-            <Link href="/planner" className="px-5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all">AI Planner</Link>
-            <Link href="/referensi" className="px-5 py-2 rounded-full text-sm font-bold text-emerald-600 bg-emerald-50 transition-all">Referensi</Link>
+          <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2 z-10">
+            <Link href="/" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Beranda</Link>
+            <Link href="/planner" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">AI Planner</Link>
+            <Link href="/dashboard" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Riwayat</Link>
+            <Link href="/referensi" className="text-sm font-bold text-emerald-600 border-b-2 border-emerald-500 pb-0.5 transition-colors">Katalog</Link>
           </nav>
 
-          <Link href="/planner" className="flex items-center gap-2 px-5 py-2 bg-slate-900 text-white rounded-full text-sm font-semibold hover:bg-emerald-600 transition-colors z-10">
-            <ChevronLeft className="w-4 h-4" /> Kembali
-          </Link>
+          <div className="flex items-center gap-3 z-20">
+            <Link href="/profile" className="px-5 py-2.5 rounded-full text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">Profil</Link>
+            <button onClick={() => signOut()} className="px-5 py-2.5 rounded-full text-sm font-bold text-white bg-slate-900 hover:bg-red-500 hover:text-white transition-colors shadow-sm">
+              Keluar
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 sm:px-8 pt-10">
+      <main className="max-w-6xl mx-auto px-6 sm:px-8 pt-28">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -93,43 +93,32 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
       
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 relative">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4 flex items-center justify-between relative">
-          <Link href="/" className="flex items-center gap-2 group z-10 relative">
-            <div className="w-9 h-9 bg-black rounded-full flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
-              <Activity className="w-5 h-5 text-white" />
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group z-20">
+            <div className="w-9 h-9 rounded-full flex items-center justify-center bg-black text-white group-hover:bg-emerald-600 transition-colors">
+              <Activity className="w-5 h-5" />
             </div>
-            <span className="text-xl font-black text-slate-800 tracking-tight">Nutri<span className="text-emerald-500">Logic</span></span>
+            <span className="text-xl font-black tracking-tight text-slate-800">Nutri<span className="text-emerald-500">Logic</span></span>
           </Link>
 
-          {/* Main Navigation (Pill Navbar) */}
-          <nav className="hidden md:flex items-center gap-1 bg-slate-50/80 backdrop-blur-md border border-slate-200/60 p-1.5 rounded-full shadow-sm absolute left-1/2 -translate-x-1/2 z-10">
-            <Link href="/" className="px-5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all">
-              Beranda
-            </Link>
-            <Link href="/planner" className="px-5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all">
-              AI Planner
-            </Link>
-            <Link href="/dashboard" className="px-5 py-2 rounded-full text-sm font-bold text-emerald-600 bg-emerald-50 transition-all">
-              Riwayat
-            </Link>
-            <Link href="/profile" className="px-5 py-2 rounded-full text-sm font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-all">
-              Profil
-            </Link>
+          <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2 z-10">
+            <Link href="/" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Beranda</Link>
+            <Link href="/planner" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">AI Planner</Link>
+            <Link href="/dashboard" className="text-sm font-bold text-emerald-600 border-b-2 border-emerald-500 pb-0.5 transition-colors">Riwayat</Link>
+            <Link href="/referensi" className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Katalog</Link>
           </nav>
 
-          <div className="flex items-center gap-3 z-20 relative">
-            <Link href="/planner" className="hidden sm:flex text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-full hover:bg-emerald-100 transition-colors shadow-sm">
-              Buat Plan
-            </Link>
-            <button onClick={() => signOut()} title="Keluar" className="w-10 h-10 flex items-center justify-center text-slate-500 bg-white hover:text-red-600 hover:bg-red-50 rounded-full transition-all shadow-sm hover:shadow border border-slate-200 hover:border-red-200">
-              <Power className="w-5 h-5" />
+          <div className="flex items-center gap-3 z-20">
+            <Link href="/profile" className="px-5 py-2.5 rounded-full text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">Profil</Link>
+            <button onClick={() => signOut()} className="px-5 py-2.5 rounded-full text-sm font-bold text-white bg-slate-900 hover:bg-red-500 hover:text-white transition-colors shadow-sm">
+              Keluar
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 sm:px-8 pt-10">
+      <main className="max-w-5xl mx-auto px-6 sm:px-8 pt-28">
         <div className="mb-8">
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Dashboard Riwayat Planner</h1>
           <p className="text-sm text-slate-500 mt-1">Lacak pencapaian target dan kelola rencana diet Anda di sini.</p>
