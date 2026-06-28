@@ -123,8 +123,10 @@ export default function PlannerPage() {
     let bbi = 0;
     if ((formData.gender === 'pria' && t < 160) || (formData.gender !== 'pria' && t < 150)) {
       bbi = t - 100;
-    } else {
+    } else if (formData.gender === 'pria') {
       bbi = 0.9 * (t - 100);
+    } else {
+      bbi = 0.85 * (t - 100);
     }
 
     let kategori = '';

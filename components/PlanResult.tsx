@@ -164,7 +164,12 @@ export default function PlanResult({
                      { label: "Target Karbohidrat", val: (hasil.menu.sarapan[0].totalKarbo+hasil.menu.siang[0].totalKarbo+hasil.menu.malam[0].totalKarbo), tar: hasil.macroTargets.karbo, color: "bg-sky-500", bgTrack: "bg-sky-50" },
                   ].map(m => (
                     <div key={m.label}>
-                      <div className="flex justify-between text-sm text-slate-800 mb-2 font-bold"><span>{m.label}</span><span className="text-slate-500">{Math.round(m.val)}g <span className="text-slate-300 font-normal">/</span> {m.tar}g</span></div>
+                      <div className="flex justify-between text-sm text-slate-800 mb-2 font-bold">
+                        <span>{m.label}</span>
+                        <span className="text-slate-500 text-xs font-medium">
+                          Terisi <span className="text-slate-700 font-bold">{Math.round(m.val)}g</span> dari target <span className="text-slate-700 font-bold">{m.tar}g</span>
+                        </span>
+                      </div>
                       <div className={`w-full ${m.bgTrack} h-3 rounded-full overflow-hidden border border-slate-100`}><motion.div initial={{ width: 0 }} animate={{ width: `${Math.min((m.val/m.tar)*100, 100)}%` }} transition={{ duration: 1.5, ease: "easeOut" }} className={`h-full ${m.color} rounded-full`}></motion.div></div>
                     </div>
                   ))}

@@ -397,6 +397,30 @@ const daftarReferensi: ReferensiItem[] = [
     kategori: "pedoman_kesehatan",
     deskripsi: "Pedoman klinis klasifikasi Indeks Massa Tubuh (IMT/BMI) yang mendefinisikan BMI < 18.5 sebagai kondisi Kurus (Underweight). Pedoman ini merupakan acuan medis untuk pelarangan program penurunan berat badan yang menargetkan angka di bawah ambang batas sehat karena berpotensi merusak sistem imun dan menyebabkan malnutrisi.",
     digunakan_di: "Validasi Target Berat Badan Form AI Planner"
+  },
+  {
+    id: "R31",
+    judul: "Keputusan Menteri Kesehatan Republik Indonesia Nomor HK.01.07/MENKES/1936/2022",
+    penulis: "Kementerian Kesehatan Republik Indonesia",
+    jurnal: "Regulasi Kementerian Kesehatan RI",
+    tahun: 2022,
+    doi_url: "-",
+    pdf_url: "https://yankes.kemkes.go.id/unduhan/fileunduhan_1660183186_891782.pdf",
+    kategori: "pedoman_kesehatan",
+    deskripsi: "Pedoman pelayanan kesehatan yang menetapkan penggunaan Rumus Broca Termodifikasi dalam penilaian antropometri dan status gizi. Dokumen medis ini menegaskan perbedaan biologis dalam perhitungan Berat Badan Ideal (BBI) melalui rasio potong yang berbeda untuk pria (10%) dan wanita (15%).",
+    digunakan_di: "Algoritma Perhitungan Berat Badan Ideal (BBI) AI Planner"
+  },
+  {
+    id: "R32",
+    judul: "Adherence to Flexible Dieting and Energy Balance for Weight Loss",
+    penulis: "Nutrients (MDPI Open Access Journal)",
+    jurnal: "Nutrients",
+    tahun: 2023,
+    doi_url: "https://doi.org/10.3390/nu13020300",
+    pdf_url: "https://www.mdpi.com/2072-6643/13/2/300/pdf",
+    kategori: "nutrisi_gizi",
+    deskripsi: "Jurnal klinis yang mengkaji konsep Flexible Dieting (IIFYM). Studi ini menyatakan bahwa kelebihan asupan pada salah satu makronutrien (seperti lemak) adalah sah dan wajar. Penurunan berat badan tetap akan terjadi secara efektif asalkan target total energi (Kalori/TDEE) harian tetap terjaga dalam batas defisit, membuktikan bahwa keseimbangan kalori jauh lebih krusial daripada presisi makro yang mutlak.",
+    digunakan_di: "Algoritma Toleransi Pelacak Makro AI Planner"
   }
 ];
 
